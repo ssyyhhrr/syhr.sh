@@ -2,12 +2,14 @@ const express = require("express")
 const { Database } = require("sqlite3")
 const db = new Database("data.db")
 const fetch = require("node-fetch")
+const favicon = require("serve-favicon")
 
 var app = express()
 
 app.set("views", "views")
 app.set("view engine", "ejs")
 
+app.use(favicon('favicon.ico'))
 app.use(express.static("assets"))
 app.use(express.urlencoded({ extended: true }))
 
@@ -46,7 +48,7 @@ app.get('/:slug', async function(req, res) {
     }
 })
 
-app.listen(3000, () => {
+app.listen(4000, () => {
     console.log(`[${timestamp()}] [START] app.js`)
 })
 
