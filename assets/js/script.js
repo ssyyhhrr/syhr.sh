@@ -174,3 +174,35 @@ class App {
 }
 
 new App()
+
+async function shortenURL() {
+  var postReq = await fetch('/shorten', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({url: document.getElementById("email").value})})
+  console.log("hello")
+}
+
+async function testURL() {
+  document.getElementById("submit").style.color = "rgba(255, 255, 255, 0)"
+  document.getElementById("spinner").style.color = "rgba(255, 255, 255, 1)"
+  document.getElementById("spinner").style.display = "inline-block"
+  var url = document.getElementById("email").value
+  if (!url.startsWith("http://") && !url.startsWith("https://")) url = "https://" + url
+  fetch(url, { mode: "no-cors" }).then((postReq => {
+    if (postReq.ok) {
+      document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
+      document.getElementById("spinner").style.color = "rgba(255, 255, 255, 0)"
+      document.getElementById("spinner").style.display = "none"
+    }
+  })).catch(err => {
+    document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
+    document.getElementById("email").style.animation = "shake 0.5s"
+    document.getElementById("email").style.backgroundColor = "rgba(220, 22, 60, 0.3)"
+    document.getElementById("spinner").style.color = "rgba(255, 255, 255, 0)"
+    document.getElementById("spinner").style.display = "none"
+    setTimeout(() => { document.getElementById("email").style.backgroundColor = "inherit" }, 500)
+  })
+}
+
+document.getElementById("submit").addEventListener("click", function(event) {
+  event.preventDefault()
+  testURL()
+})

@@ -15,13 +15,13 @@
 
 		<header id="header" style="padding-left: 3em">
 			<h1>syhr.sh</h1>
-			<p style="color: #fff">A simple web tool for creating short, rememberable<br />
+			<p style="color: #fff">A simple web tool for creating short, memorable<br />
 			and shareable links. Brought to you by <a href="https://sy.com.hr/" target="_blank">syhr</a>.</p>
 		</header>
 
-		<form id="signup-form" method="post" action="#" style="padding-left: 3em">
-			<input type="email" name="email" id="email" placeholder="sy.com.hr" />
-			<input type="submit" value="Shorten" />
+		<form id="signup-form" style="padding-left: 3em">
+			<input type="text" name="url" id="email" placeholder="sy.com.hr" />
+			<div style="position: relative;"><input type="submit" value="Shorten" id="submit" style="z-index: -1; position: absolute;"/><i id="spinner" class="fas fa-spinner fa-pulse" style="position: relative; font-size: 2em; color: rgba(255, 255, 255, 0); display: none; top: calc(50% - (2em * 0.25)); left: 90%"></i></div>
 		</form>
 
 		<footer id="footer">

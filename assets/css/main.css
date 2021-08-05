@@ -724,7 +724,7 @@ button,
   background-color: #1cb495;
   border-radius: 6px;
   border: 0;
-  color: #ffffff !important;
+  color: #ffffff;
   cursor: pointer;
   display: inline-block;
   font-weight: 700;
@@ -873,3 +873,18 @@ button,
       left: auto;
       margin: 1em 0 0 0;
       position: relative; } }
+
+
+@keyframes shake {
+  0% { transform: translate(0.2em, 0px); }
+  10% { transform: translate(-0.2em, 0px); }
+  20% { transform: translate(-0.6em, 0px); }
+  30% { transform: translate(0.6em, 0px); }
+  40% { transform: translate(0.2em, -0px); }
+  50% { transform: translate(-0.2em, 0px); }
+  60% { transform: translate(-0.6em, 0px); }
+  70% { transform: translate(0.6em, 0px); }
+  80% { transform: translate(-0.2em, 0px); }
+  90% { transform: translate(0.2em, 0px); }
+  100% { transform: translate(0.2em, 0px); }
+}

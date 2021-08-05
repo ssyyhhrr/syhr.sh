@@ -13,6 +13,12 @@ app.get('/', async function(req, res) {
     return res.render('index')
 })
 
+app.post('/shorten', async function (req, res) {
+    console.log(`[${timestamp()}] [${req.ip}] [${req.method}] ${req.protocol} ${req.originalUrl}`)
+    console.log(req.body.email)
+    return res.render('index')
+})
+
 app.listen(3000, () => {
     console.log(`[${timestamp()}] [START] app.js`)
 })
