@@ -81,10 +81,10 @@ html, body {
   height: 100%;
   overflow-x: hidden;
   width: 100%; }
-  @media screen and (max-height: 640px) {
+/*   @media screen and (max-height: 640px) {
     html, body {
       height: auto;
-      min-height: 100%; } }
+      min-height: 100%; } } */
 
 body {
   display: -moz-flex;
@@ -756,13 +756,6 @@ button,
   .button.disabled,
   .button:disabled {
     opacity: 0.5; }
-  @media screen and (max-width: 480px) {
-    input[type="submit"],
-    input[type="reset"],
-    input[type="button"],
-    button,
-    .button {
-      padding: 0; } }
 
 /* Header */
 #header h1 {
@@ -858,20 +851,20 @@ button,
   @media screen and (max-width: 1680px) {
     #footer {
       bottom: 3.5em;
-      left: 3.5em; } }
+      left: 3em; } }
   @media screen and (max-width: 736px) {
     #footer {
       bottom: 2em;
-      left: 2em; } }
+      left: 3em; } }
   @media screen and (max-width: 360px) {
     #footer {
       bottom: 1.25em;
-      left: 1.25em; } }
+      left: 3em; } }
   @media screen and (max-height: 640px) {
     #footer {
       bottom: auto;
-      left: auto;
-      margin: 1em 0 0 0;
+      left: 3em;
+      margin: 3em 0 0 0;
       position: relative; } }
 
 
