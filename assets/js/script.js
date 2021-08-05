@@ -181,16 +181,52 @@ async function shortenURL() {
 }
 
 async function testURL() {
-  document.getElementById("submit").style.color = "rgba(255, 255, 255, 0)"
-  document.getElementById("spinner").style.color = "rgba(255, 255, 255, 1)"
-  document.getElementById("spinner").style.display = "inline-block"
+  doSpinner = true
   var url = document.getElementById("email").value
   if (!url.startsWith("http://") && !url.startsWith("https://")) url = "https://" + url
-  fetch(url, { mode: "no-cors" }).then((postReq => {
-    if (postReq.ok) {
+  if (url.startsWith('http://syhr.sh') || url.startsWith('https://syhr.sh')) {
+    document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
+    document.getElementById("email").style.animation = "shake 0.5s"
+    document.getElementById("email").style.backgroundColor = "rgba(220, 22, 60, 0.3)"
+    document.getElementById("spinner").style.color = "rgba(255, 255, 255, 0)"
+    document.getElementById("spinner").style.display = "none"
+    setTimeout(() => { document.getElementById("email").style.backgroundColor = "inherit" }, 500)  
+    return
+  }
+  setTimeout(() => {
+    if (doSpinner) {
+      document.getElementById("submit").style.color = "rgba(255, 255, 255, 0)"
+      document.getElementById("spinner").style.color = "rgba(255, 255, 255, 1)"
+      document.getElementById("spinner").style.display = "inline-block"
+    }
+  }, 100)
+  fetch(url, { mode: "no-cors" }).then((req => {
+    doSpinner = false
+    document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
+    document.getElementById("spinner").style.color = "rgba(255, 255, 255, 0)"
+    document.getElementById("spinner").style.display = "none"
+    let res = await fetch('/shorten', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' }, body: `url=${url}` })
+    if (res.ok) {
+      var content = res.json();
+      document.getElementById("email").value = content.url
+      document.getElementById("email").style.backgroundColor = "rgba(128, 201, 4, 0.3)"
+      document.getElementById("email").style.transition = "0.25s"
+      document.getElementById("email").style.width = "110%"
+      document.getElementById("email").style.length = "110%"
+      setTimeout(() => { 
+        document.getElementById("email").style.width = "100%"
+        document.getElementById("email").style.length = "100%"
+        document.getElementById("email").style.transition = "0s"
+        document.getElementById("email").style.backgroundColor = "inherit"
+      }, 500)
+    }
+    else {
       document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
+      document.getElementById("email").style.animation = "shake 0.5s"
+      document.getElementById("email").style.backgroundColor = "rgba(220, 22, 60, 0.3)"
       document.getElementById("spinner").style.color = "rgba(255, 255, 255, 0)"
       document.getElementById("spinner").style.display = "none"
+      setTimeout(() => { document.getElementById("email").style.backgroundColor = "inherit" }, 500)
     }
   })).catch(err => {
     document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
