@@ -175,36 +175,31 @@ class App {
 
 new App()
 
-async function shortenURL() {
-  var postReq = await fetch('/shorten', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({url: document.getElementById("email").value})})
-  console.log("hello")
-}
-
 async function testURL() {
+  document.getElementById("submit").disabled = true
   var width = window.innerWidth
   || document.documentElement.clientWidth
   || document.body.clientWidth;
-  
-  var height = window.innerHeight
-  || document.documentElement.clientHeight
-  || document.body.clientHeight;
 
-  showSpinner = width > 480 && height > 480
+  showSpinner = width > 480
   doSpinner = true
   var url = document.getElementById("email").value
   if (!url.startsWith("http://") && !url.startsWith("https://")) url = "https://" + url
   if (url.startsWith('http://syhr.sh') || url.startsWith('https://syhr.sh')) {
     if (showSpinner) {
       document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
-      document.getElementById("email").style.animation = "shake 0.5s"
-      document.getElementById("email").style.backgroundColor = "rgba(220, 22, 60, 0.3)"
+    }
+    document.getElementById("email").style.animation = "shake 0.5s"
+    document.getElementById("email").style.backgroundColor = "rgba(220, 22, 60, 0.3)"
+    if (showSpinner) {
       document.getElementById("spinner").style.color = "rgba(255, 255, 255, 0)"
       document.getElementById("spinner").style.display = "none"
-      setTimeout(() => { 
-        document.getElementById("email").style.backgroundColor = "inherit" 
-        document.getElementById("email").style.animation = "none"
-      }, 500)  
     }
+    setTimeout(() => { 
+      document.getElementById("email").style.backgroundColor = "inherit" 
+      document.getElementById("email").style.animation = "none"
+    }, 500)  
+    document.getElementById("submit").disabled = false
     return
   }
   setTimeout(() => {
@@ -231,6 +226,7 @@ async function testURL() {
         document.getElementById("email").style.backgroundColor = "inherit"
         document.getElementById("email").style.animation = "none"
       }, 500)
+      document.getElementById("submit").disabled = false
     }
     else {
       if (showSpinner) {
@@ -246,6 +242,7 @@ async function testURL() {
         document.getElementById("email").style.backgroundColor = "inherit" 
         document.getElementById("email").style.animation = "none"
       }, 500)
+      document.getElementById("submit").disabled = false
     }
   })).catch(err => {
     document.getElementById("submit").style.color = "rgba(255, 255, 255, 1)"
@@ -257,6 +254,7 @@ async function testURL() {
       document.getElementById("email").style.backgroundColor = "inherit" 
       document.getElementById("email").style.animation = "none"
     }, 500)
+    document.getElementById("submit").disabled = false
   })
 }
 

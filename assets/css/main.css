@@ -615,7 +615,7 @@ input[type="text"],
 input[type="password"],
 input[type="email"],
 select {
-  height: 2.75em; }
+  padding: 0.45em; }
 
 textarea {
   padding: 0.75em 1em; }
@@ -746,16 +746,6 @@ button,
   button:active,
   .button:active {
     background-color: #199e83; }
-  input[type="submit"].disabled, input[type="submit"]:disabled,
-  input[type="reset"].disabled,
-  input[type="reset"]:disabled,
-  input[type="button"].disabled,
-  input[type="button"]:disabled,
-  button.disabled,
-  button:disabled,
-  .button.disabled,
-  .button:disabled {
-    opacity: 0.5; }
 
 /* Header */
 #header h1 {
