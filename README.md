@@ -1,6 +1,4 @@
 <a name="readme-top"></a>
-
-<!-- PROJECT SHIELDS -->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -9,28 +7,26 @@
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 <!-- PROJECT LOGO -->
-<br />
 <div align="center">
   <h3 align="center">syhr.sh</h3>
-
   <p align="center">
     A simple web tool for creating short, memorable and shareable links written with Node.js.
     <br />
-    <a href="https://syhr.sh/">View Demo</a>
+    🌐 <a href="https://syhr.sh/">View Demo</a>
     ·
-    <a href="https://github.com/ssyyhhrr/syhr.sh/issues">Report Bug</a>
+    🐛 <a href="https://github.com/ssyyhhrr/syhr.sh/issues">Report Bug</a>
     ·
-    <a href="https://github.com/ssyyhhrr/syhr.sh/issues">Request Feature</a>
+    ✨ <a href="https://github.com/ssyyhhrr/syhr.sh/issues">Request Feature</a>
   </p>
 </div>
+
+---
 
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
   <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-    </li>
+    <li><a href="#about-the-project">About The Project</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -38,22 +34,31 @@
   </ol>
 </details>
 
+---
+
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## 🔗 About The Project
 
-<img src="https://sy.hr/files/2022-11-06_17-50-19_d4foxqz8tPf91jCp.png" height="300">
+<p float="left">
+  <img src="https://raw.githubusercontent.com/ssyyhhrr/syhr.sh/refs/heads/main/assets/screenshot.png" height="300"/>
+</p>
 
-A simple web tool for creating short, memorable and shareable links written with Node.js.
+syhr.sh is a lightweight URL shortener for creating short, memorable, and shareable links. Built with Node.js, it offers a clean and simple interface for generating compact URLs you can share anywhere.
 
-<!-- USAGE EXAMPLES -->
-## Usage
+---
 
-[https://syhr.sh/](https://syhr.sh/)
+<!-- USAGE -->
+## 🚀 Usage
+
+Visit [https://syhr.sh/](https://syhr.sh/) to start shortening links instantly — no setup required.
+
+---
 
 <!-- CONTRIBUTING -->
-## Contributing
+## 🤝 Contributing
 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+
 Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
@@ -62,13 +67,17 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+---
+
 <!-- LICENSE -->
-## License
+## 📄 License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
+---
+
 <!-- CONTACT -->
-## Contact
+## 📬 Contact
 
 Rhys Bishop - [https://sy.hr/](https://sy.hr/) - mail@rhysbi.shop
 
