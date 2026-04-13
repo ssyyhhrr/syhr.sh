@@ -14,9 +14,6 @@
     "express": "^4.17.1",
     "node-fetch": "^2.6.1",
     "serve-favicon": "^2.5.0",
-    "sqlite3": "^5.0.0"
-  },
-  "devDependencies": {
-    "electron-rebuild": "^3.2.9"
+    "sqlite3": "^6.0.1"
   }
 }
