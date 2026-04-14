@@ -1,4 +1,4 @@
-FROM node:25-alpine3.22
+FROM node:25-slim
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 

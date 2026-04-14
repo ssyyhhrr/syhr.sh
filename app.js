@@ -1,5 +1,5 @@
 const express = require("express")
-const { Database } = require("sqlite3")
+const Database = require("better-sqlite3")
 const db = new Database("data.db")
 const fetch = require("node-fetch")
 const favicon = require("serve-favicon")
@@ -12,6 +12,7 @@ app.set("view engine", "ejs")
 app.use(favicon('favicon.ico'))
 app.use(express.static("assets"))
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 app.get('/', async function(req, res) {
     console.log(`[${timestamp()}] [${req.ip}] [${req.method}] ${req.protocol} ${req.originalUrl}`)
@@ -20,30 +21,28 @@ app.get('/', async function(req, res) {
 
 app.post('/shorten', async function (req, res) {
     console.log(`[${timestamp()}] [${req.ip}] [${req.method}] ${req.protocol} ${req.originalUrl}`)
-    var content = JSON.parse(JSON.stringify(req.body))
-    fetch(content.url, { mode: "no-cors" }).then((async req => {
-        let duplicate = await query('SELECT slug, url FROM slugs WHERE url = ?', [content.url])
+    try {
+        var content = req.body
+        await fetch(content.url)
+        let duplicate = db.prepare('SELECT slug, url FROM slugs WHERE url = ?').all(content.url)
         if (duplicate.length > 0) return res.json(JSON.stringify({ url: `https://syhr.sh/${duplicate[0].slug}/` }))
-        slug = generateSlug()
-        let result = await query('SELECT slug FROM slugs WHERE slug = ?', [slug])
-        while (result.length > 0) {
+        let slug = generateSlug()
+        while (db.prepare('SELECT slug FROM slugs WHERE slug = ?').get(slug)) {
             slug = generateSlug()
-            result = await query('SELECT slug FROM slugs WHERE slug = ?', [slug])
         }
-        db.run("INSERT INTO slugs (slug, url) VALUES(?, ?)", [slug, content.url])
+        db.prepare("INSERT INTO slugs (slug, url) VALUES(?, ?)").run(slug, content.url)
         res.json(JSON.stringify({ url: `https://syhr.sh/${slug}/` }))
-    })).catch(err => {
-        console.log(err)
-        return
-    })
+    } catch(err) {
+        console.error(err)
+        res.status(500).json({ error: 'Something went wrong' })
+    }
 })
 
-app.get('/:slug', async function(req, res) {
-    let result = await query('SELECT slug, url FROM slugs WHERE slug = ?', [req.params.slug])
-    if (result.length > 0) {
-        res.redirect(result[0].url)
-    }
-    else {
+app.get('/:slug', function(req, res) {
+    let result = db.prepare('SELECT slug, url FROM slugs WHERE slug = ?').get(req.params.slug)
+    if (result) {
+        res.redirect(result.url)
+    } else {
         return res.render('index')
     }
 })
@@ -64,18 +63,6 @@ function timestamp() {
     let seconds = ("0" + (date.getSeconds())).slice(-2)
 
     return (day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds)
-}
-
-async function query(query, args) {
-    return new Promise((res, rej) => {
-      db.all(query, args, (err, rows) => {
-        if (err) {
-          rej(err)
-          return
-        }
-        res(rows)
-      })
-    })
 }
 
 function generateSlug() {
