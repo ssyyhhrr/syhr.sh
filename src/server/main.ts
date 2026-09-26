@@ -23,6 +23,13 @@ function start(): void {
   const server = serve({ fetch: app.fetch, port: config.port, hostname: config.host }, (info) => {
     log("info", "listening", { host: info.address, port: info.port, publicUrl: config.publicUrl });
   });
+  // Listening fails asynchronously (port in use, no permission), after start() has returned,
+  // so the try/catch below can't see it.
+  server.once("error", (error) => {
+    log("error", "failed to start", errorFields(error));
+    store.close();
+    process.exit(1);
+  });
 
   const stop = (signal: string) => {
     log("info", "shutting down", { signal });
