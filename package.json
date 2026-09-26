@@ -17,7 +17,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test:unit": "vitest run --passWithNoTests",
+    "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:legacy": "node scripts/e2e-legacy.ts",
     "fixtures:legacy": "node scripts/fixtures/record-legacy.ts"
