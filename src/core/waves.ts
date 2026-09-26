@@ -95,9 +95,11 @@ export function advanceWaves(
     progress: layer.progress + settings.progressPerSecond * seconds,
   }));
   const staying = moved.filter((layer) => layer.progress <= restartAbove);
+  // Keep the overshoot rather than resetting to exactly 0: frame steps vary, and discarding a
+  // different sliver each time would slowly bunch the bands together over hours.
   const restarting = moved
     .filter((layer) => layer.progress > restartAbove)
-    .map((layer) => ({ ...layer, progress: 0 }));
+    .map((layer) => ({ ...layer, progress: layer.progress - restartAbove }));
   return {
     layers: [...staying, ...restarting],
     sway: state.sway + settings.swayPerSecond * seconds,
