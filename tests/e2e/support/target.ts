@@ -16,6 +16,9 @@ export function e2eTarget(): E2eTarget {
   throw new Error(`E2E_TARGET must be "legacy" or "new", got "${value}"`);
 }
 
+import { tmpdir } from "node:os";
+import path from "node:path";
+
 /** Port the app under test listens on. The old app hard-codes 4000. */
 export const E2E_PORT = 4000;
 
@@ -27,3 +30,9 @@ export const E2E_BASE_URL = `http://127.0.0.1:${E2E_PORT}`;
  * back onto {@link E2E_BASE_URL} by path, so they never need the real domain to resolve.
  */
 export const PUBLIC_ORIGIN = "https://syhr.sh";
+
+/**
+ * The new app's database during an e2e run. Known to the specs as well as the server, so they
+ * can drive the admin CLI against the same data the running site serves.
+ */
+export const E2E_DATABASE_PATH = path.join(tmpdir(), `syhr-e2e-${E2E_PORT}`, "e2e.db");
