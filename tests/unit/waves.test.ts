@@ -49,10 +49,32 @@ describe("advanceWaves", () => {
   it("restarts a layer that passes the top at the bottom, drawn last", () => {
     const start = initialWaveState();
     const top = start.layers[0];
-    // The top layer starts at 1 and restarts once past 1 + 1/9: just under 2 seconds.
+    // The top layer starts at 1 and restarts once past 1 + 1/9: just under 2 seconds. It keeps
+    // the sliver it overshot by, so the bands stay evenly spaced.
     const next = advanceWaves(start, 2000);
-    expect(next.layers.at(-1)).toEqual({ ...top, progress: 0 });
+    const restartAbove = 1 + 1 / DEFAULT_WAVE_SETTINGS.bands;
+    expect(next.layers.at(-1)).toEqual({
+      ...top,
+      progress: expect.closeTo(1.12 - restartAbove, 9) as unknown,
+    });
     expect(next.layers).toHaveLength(start.layers.length);
+  });
+
+  it("keeps the bands evenly spaced however uneven the frames are", () => {
+    // Steps of 7-100 ms, like a real page with dropped frames, for an hour.
+    let state = initialWaveState();
+    const random = seededRandom(7);
+    for (let t = 0; t < 60 * 60_000;) {
+      const step = 7 + random() * 93;
+      state = advanceWaves(state, step);
+      t += step;
+    }
+    const spacing = 1 + 1 / DEFAULT_WAVE_SETTINGS.bands;
+    const cycle = spacing / state.layers.length;
+    const phases = state.layers.map((l) => l.progress).sort((a, b) => a - b);
+    for (let i = 1; i < phases.length; i++) {
+      expect((phases[i] ?? 0) - (phases[i - 1] ?? 0)).toBeCloseTo(cycle, 6);
+    }
   });
 
   it("keeps cycling indefinitely with every layer in range", () => {
