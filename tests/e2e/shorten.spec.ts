@@ -5,7 +5,7 @@
  * addresses at all.
  */
 import { expect, test } from "./support/fixtures.ts";
-import { shorten, shortenOk, uniqueTarget } from "./support/ui.ts";
+import { shorten, shortenOk, uniqueTarget, urlInput } from "./support/ui.ts";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -39,11 +39,36 @@ test("different URLs get different links", async ({ page }) => {
 });
 
 test("links to syhr.sh itself are refused", async ({ page }) => {
-  expect(await shorten(page, "https://syhr.sh/kachow")).toEqual({ kind: "refused" });
+  expect((await shorten(page, "https://syhr.sh/kachow")).kind).toBe("refused");
 });
 
 test("input that isn't a web address is refused", async ({ page }) => {
-  expect(await shorten(page, "not a url")).toEqual({ kind: "refused" });
+  expect((await shorten(page, "not a url")).kind).toBe("refused");
+});
+
+test("short links have no trailing slash", async ({ page, target }) => {
+  test.skip(target === "legacy", "Changed in the overhaul: the old links ended in '/'.");
+  const { link } = await shortenOk(page, uniqueTarget());
+  expect(link).toMatch(/^https:\/\/syhr\.sh\/[A-Za-z0-9]{6}$/);
+});
+
+test("refusals say why", async ({ page, target }) => {
+  test.skip(target === "legacy", "Added in the overhaul: the old page only shook the box.");
+  const cases: [string, RegExp][] = [
+    ["https://syhr.sh/kachow", /can't be shortened again/],
+    ["not a url", /isn't a valid web address/],
+    ["http://192.168.1.1/admin", /private network/],
+    ["https://bit.ly/abc", /already a short link/],
+    ["javascript:alert(1)", /Only http/],
+  ];
+  for (const [input, message] of cases) {
+    await page.goto("/");
+    const outcome = await shorten(page, input);
+    expect(outcome.kind).toBe("refused");
+    if (outcome.kind === "refused") expect(outcome.message).toMatch(message);
+    // What was typed stays in the box, so it can be corrected.
+    await expect(urlInput(page)).toHaveValue(input);
+  }
 });
 
 test("query strings survive shortening intact", async ({ page, request, target }) => {

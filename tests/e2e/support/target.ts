@@ -11,8 +11,7 @@ export type E2eTarget = "legacy" | "new";
 
 /** Reads `E2E_TARGET`, rejecting typos so a run can't silently test the wrong app. */
 export function e2eTarget(): E2eTarget {
-  // Until the new server exists (phase 3 of the overhaul), the old app is the default.
-  const value = process.env["E2E_TARGET"] ?? "legacy";
+  const value = process.env["E2E_TARGET"] ?? "new";
   if (value === "legacy" || value === "new") return value;
   throw new Error(`E2E_TARGET must be "legacy" or "new", got "${value}"`);
 }

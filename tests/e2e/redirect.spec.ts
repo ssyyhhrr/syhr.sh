@@ -30,3 +30,23 @@ test("an unknown short link still offers the shortener", async ({ page }) => {
   await page.goto("/doesNotExist123");
   await expect(urlInput(page)).toBeVisible();
 });
+
+test("an unknown short link is a 404 that says so", async ({ page, target }) => {
+  test.skip(target === "legacy", "Changed in the overhaul: the old app answered 200.");
+  const response = await page.goto("/doesNotExist123");
+  expect(response?.status()).toBe(404);
+  await expect(page).toHaveTitle(/Link not found/);
+  await expect(page.getByText("That short link doesn't exist.")).toBeVisible();
+});
+
+test("redirects aren't cached, so a deleted link stops working at once", async ({
+  page,
+  request,
+  target,
+}) => {
+  test.skip(target === "legacy", "Added in the overhaul.");
+  await page.goto("/");
+  const { slug } = await shortenOk(page, uniqueTarget());
+  const response = await request.get(`/${slug}`, { maxRedirects: 0 });
+  expect(response.headers()["cache-control"]).toBe("no-store");
+});
