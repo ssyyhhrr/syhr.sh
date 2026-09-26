@@ -26,7 +26,8 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:legacy": "node scripts/e2e-legacy.ts",
-    "fixtures:legacy": "node scripts/fixtures/record-legacy.ts"
+    "fixtures:legacy": "node scripts/fixtures/record-legacy.ts",
+    "screenshots": "node scripts/screenshot.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
