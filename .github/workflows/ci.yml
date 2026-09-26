@@ -12,9 +12,6 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
-        with:
-          # Full history: the legacy safety-net tests extract the pre-overhaul app from git.
-          fetch-depth: 0
       - uses: actions/setup-node@v5
         with:
           node-version: 24

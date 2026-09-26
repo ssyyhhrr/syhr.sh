@@ -12,10 +12,8 @@ export default tseslint.config(
       ".cache/",
       "test-results/",
       "playwright-report/",
-      // Pre-overhaul app, kept only until the rewrite replaces it.
-      "app.js",
+      // Pre-overhaul front-end assets, kept only until the rewrite replaces them.
       "assets/",
-      "views/",
     ],
   },
   js.configs.recommended,

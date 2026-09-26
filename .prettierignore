@@ -5,7 +5,5 @@ dist/
 test-results/
 playwright-report/
 tests/fixtures/
-# Pre-overhaul files, deleted as the rewrite replaces them.
-app.js
-views/
+# Pre-overhaul front-end assets, deleted as the rewrite replaces them.
 assets/
