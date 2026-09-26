@@ -50,7 +50,8 @@ describe("normalisation", () => {
 
 describe("refusals", () => {
   it.each<[string, Refusal]>([
-    ["", "invalid_url"],
+    ["", "empty"],
+    ["   ", "empty"],
     ["not a url", "invalid_url"],
     ["https://", "invalid_url"],
     ["ftp://example.com/file", "unsupported_scheme"],

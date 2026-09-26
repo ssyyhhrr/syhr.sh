@@ -15,6 +15,7 @@ export const MAX_URL_LENGTH = 2048;
  * interface.
  */
 export type Refusal =
+  | "empty"
   | "invalid_url"
   | "unsupported_scheme"
   | "too_long"
@@ -26,6 +27,7 @@ export type Refusal =
 
 /** Words shown to people for each refusal. */
 export const REFUSAL_MESSAGES: Readonly<Record<Refusal, string>> = {
+  empty: "Paste a link to shorten it.",
   invalid_url: "That isn't a valid web address.",
   unsupported_scheme: "Only http:// and https:// links can be shortened.",
   too_long: `That link is too long (the limit is ${MAX_URL_LENGTH} characters).`,
@@ -80,6 +82,7 @@ export function parseLinkInput(input: string): URL | null {
 export function evaluateLink(input: string, policy: LinkPolicy): LinkDecision {
   // Cheap guard before parsing: normalisation never shrinks a URL much.
   if (input.length > MAX_URL_LENGTH * 2) return { ok: false, refusal: "too_long" };
+  if (input.trim() === "") return { ok: false, refusal: "empty" };
   const url = parseLinkInput(input);
   if (!url) return { ok: false, refusal: "invalid_url" };
   if (url.protocol !== "http:" && url.protocol !== "https:") {

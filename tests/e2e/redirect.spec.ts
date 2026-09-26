@@ -37,6 +37,9 @@ test("an unknown short link is a 404 that says so", async ({ page, target }) => 
   expect(response?.status()).toBe(404);
   await expect(page).toHaveTitle(/Link not found/);
   await expect(page.getByText("That short link doesn't exist.")).toBeVisible();
+  // Shortening from here works, and the notice goes once it's no longer relevant.
+  await shortenOk(page, uniqueTarget());
+  await expect(page.getByText("That short link doesn't exist.")).toBeHidden();
 });
 
 test("redirects aren't cached, so a deleted link stops working at once", async ({

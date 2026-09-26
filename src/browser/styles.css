@@ -1,0 +1,632 @@
+/*
+ * syhr.sh's only stylesheet. Dark, Raleway and gold, like sy.hr, over the wave canvas.
+ *
+ * The Content-Security-Policy forbids inline styles, so every visual rule lives here; scripts
+ * only toggle classes and the `hidden` attribute.
+ */
+
+/* Raleway, self-hosted, Latin only: the page has no other scripts, and woff2 works in every
+   supported browser. */
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../../node_modules/@fontsource/raleway/files/raleway-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url("../../node_modules/@fontsource/raleway/files/raleway-latin-600-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url("../../node_modules/@fontsource/raleway/files/raleway-latin-700-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Raleway";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 800;
+  src: url("../../node_modules/@fontsource/raleway/files/raleway-latin-800-normal.woff2")
+    format("woff2");
+}
+
+:root {
+  color-scheme: dark;
+  /* sy.hr's palette. */
+  --background: #171717;
+  --heading: #ffffff;
+  --text: #a4a4a4;
+  --muted: #8c8c8c;
+  --accent: #f2d27f;
+  --accent-hover: #f7e0a6;
+  --on-accent: #171717;
+  --error: #ff9a8c;
+  --success: #9ee6a8;
+  /* Panels sit over the moving waves, so they're mostly opaque and blurred behind. */
+  --panel: rgba(23, 23, 23, 0.78);
+  --line: rgba(255, 255, 255, 0.12);
+  --radius: 16px;
+  --font: "Raleway", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* `hidden` must win over any display rule below. */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  /* Belt and braces for the tooltips above: whatever pokes out sideways (a tooltip on a
+     wrapped icon row) is clipped rather than widening the page. */
+  overflow-x: clip;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  color: var(--text);
+  font-family: var(--font);
+  font-weight: 600;
+  line-height: 1.5;
+  /* Raleway's default figures are old-style (they dip below the line), which reads oddly in
+     links full of digits. */
+  font-variant-numeric: lining-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Controls that only work with the script (Copy, Share, the QR code). */
+.no-js .needs-js {
+  display: none;
+}
+
+/* The wave background, and a vignette over it that keeps the text readable. */
+
+.waves {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 60% at 50% 45%,
+    rgba(23, 23, 23, 0.6) 0%,
+    rgba(23, 23, 23, 0.25) 65%,
+    rgba(23, 23, 23, 0) 100%
+  );
+}
+
+/* Layout: one centred column, vertically centred when it fits; the footer follows it. */
+
+.shell {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 10vh, 7rem) 1.25rem 1.5rem;
+}
+
+.title {
+  margin: 0;
+  color: var(--heading);
+  font-size: clamp(3rem, 11vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.tld {
+  color: var(--accent);
+}
+
+.tagline {
+  max-width: 34rem;
+  margin: 1.1rem 0 2.25rem;
+  font-size: clamp(1.05rem, 2.8vw, 1.25rem);
+  line-height: 1.6;
+}
+
+.notice {
+  margin: -0.75rem 0 1.5rem;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel);
+  color: #e6e6e6;
+}
+
+/* The form: one bar holding the box and the button. */
+
+.field {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.field:focus-within {
+  border-color: rgba(242, 210, 127, 0.65);
+  box-shadow: 0 0 0 4px rgba(242, 210, 127, 0.14);
+}
+
+#url {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 0.85rem;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--heading);
+  font: inherit;
+  /* 16px or more stops iOS Safari zooming the page when the box is focused. */
+  font-size: max(16px, 1.05rem);
+  font-weight: 600;
+}
+
+#url::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+#url[aria-invalid="true"] {
+  color: var(--error);
+}
+
+.submit {
+  position: relative;
+  flex: none;
+  min-height: 3rem;
+  padding: 0 1.4rem;
+  border: 0;
+  border-radius: 11px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    transform 0.1s;
+}
+
+.submit:hover {
+  background: var(--accent-hover);
+}
+
+.submit:active {
+  transform: scale(0.97);
+}
+
+.submit:disabled {
+  cursor: progress;
+}
+
+.spinner {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: auto;
+  border: 2.5px solid rgba(23, 23, 23, 0.25);
+  border-top-color: var(--on-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.submit.is-busy .submit-label {
+  visibility: hidden;
+}
+
+.submit.is-busy .spinner {
+  display: block;
+}
+
+.form-error {
+  min-height: 1.5em;
+  margin: 0.6rem 0.4rem 0;
+  color: var(--error);
+  font-size: 0.95rem;
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* The result card. */
+
+.result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title qr"
+    "link qr"
+    "target qr"
+    "actions qr";
+  align-items: start;
+  gap: 0.3rem 1.5rem;
+  margin-top: 0.75rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: rise 0.25s ease-out;
+}
+
+.no-js .result {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "title" "link" "target" "actions";
+}
+
+.result-title {
+  grid-area: title;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.short-link-row {
+  grid-area: link;
+  margin: 0;
+}
+
+/* Monospace, because slugs mix 0/O and l/I/1, which Raleway draws almost identically; people
+   read these links aloud and type them from screenshots. */
+.short-link {
+  color: var(--accent);
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  font-size: clamp(1.3rem, 4.6vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.result-target {
+  grid-area: target;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.92rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.result-url {
+  color: var(--text);
+}
+
+.result-actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--heading);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.action:hover {
+  background: rgba(255, 255, 255, 0.12);
+  text-decoration: none;
+}
+
+.action.is-done {
+  border-color: rgba(158, 230, 168, 0.45);
+  color: var(--success);
+}
+
+.action-secondary {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+}
+
+.qr {
+  grid-area: qr;
+  width: 7.5rem;
+  height: 7.5rem;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 34rem) {
+  .result {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "title" "link" "target" "actions" "qr";
+  }
+
+  .qr {
+    width: 9rem;
+    height: 9rem;
+    margin-top: 0.75rem;
+  }
+}
+
+/* Footer: sy.hr's profile row. */
+
+.footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+.profiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.5rem;
+}
+
+.profile {
+  display: inline-block;
+  opacity: 0.85;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+.profile:hover,
+.profile:focus-visible {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* Brand colours, as on sy.hr. */
+[data-service="discord"] {
+  color: #5b8dee;
+}
+[data-service="github"] {
+  color: #ac5cd9;
+}
+[data-service="letterboxd"] {
+  color: #ff8000;
+}
+[data-service="spotify"] {
+  color: #39da8a;
+}
+[data-service="steam"] {
+  color: #9090a7;
+}
+[data-service="tryhackme"] {
+  color: #b3e853;
+}
+[data-service="youtube"] {
+  color: #ff3b3b;
+}
+[data-service="email"] {
+  color: #ebeaef;
+}
+
+.copyright {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.copyright a {
+  color: var(--text);
+}
+
+.icon {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
+/*
+ * Tooltips above the footer icons. They show on hover, on keyboard focus, and while a finger
+ * is on the icon (:active), since touch screens have no hover.
+ */
+.tooltip {
+  position: relative;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  z-index: 3;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #555;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: #555;
+}
+
+/* The icons at either end of the row anchor their tooltips inwards, so a long one (the email
+   address) can't stick out past the screen edge and widen the page on phones. */
+.profiles li:first-child .tooltip-text {
+  left: 0;
+  transform: none;
+}
+.profiles li:first-child .tooltip-text::after {
+  left: 0.75em;
+}
+.profiles li:last-child .tooltip-text {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+.profiles li:last-child .tooltip-text::after {
+  right: 0.75em;
+  left: auto;
+  margin-left: 0;
+  margin-right: -5px;
+}
+
+.tooltip:hover .tooltip-text,
+.tooltip:focus-visible .tooltip-text,
+.tooltip:active .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Respect the system setting: no shaking, sliding or spinning (the spinner stays as a ring). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

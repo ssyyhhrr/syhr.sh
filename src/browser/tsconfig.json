@@ -1,0 +1,10 @@
+{
+  // Browser code: DOM types, no Node types, so nothing here can reach for `process` or `fs`.
+  // It may import the pure modules in src/core, which are checked under both configs.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": []
+  },
+  "include": ["."]
+}
