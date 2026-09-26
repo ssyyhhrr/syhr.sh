@@ -6,7 +6,7 @@
  * Reduced motion is emulated so the waves hold one still frame and the images only change when
  * the page does. Run with: npm run screenshots
  */
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -20,16 +20,21 @@ const base = `http://127.0.0.1:${port}`;
 
 await buildAssets();
 const dataDir = mkdtempSync(path.join(tmpdir(), "syhr-shots-"));
-const server = spawn(process.execPath, ["src/server/main.ts"], {
-  cwd: root,
-  stdio: "ignore",
-  env: {
-    ...process.env,
-    PORT: String(port),
-    HOST: "127.0.0.1",
-    DATABASE_PATH: path.join(dataDir, "db"),
-  },
-});
+const env = {
+  ...process.env,
+  PORT: String(port),
+  HOST: "127.0.0.1",
+  DATABASE_PATH: path.join(dataDir, "db"),
+};
+// Store the example link under a fixed slug first. Shortening it in the page then returns that
+// link (dedup), so the images don't change with every random slug.
+const exampleUrl = "https://github.com/ssyyhhrr/syhr.sh";
+execFileSync(
+  process.execPath,
+  ["src/cli/main.ts", "links", "add", exampleUrl, "--slug", "Ab3dE9"],
+  { cwd: root, env },
+);
+const server = spawn(process.execPath, ["src/server/main.ts"], { cwd: root, stdio: "ignore", env });
 
 try {
   for (let i = 0; i < 100; i++) {
@@ -54,9 +59,7 @@ try {
     const context = await browser.newContext({ ...options, reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto(base);
-    await page
-      .getByRole("textbox", { name: "Long link" })
-      .fill("https://github.com/ssyyhhrr/syhr.sh");
+    await page.getByRole("textbox", { name: "Long link" }).fill(exampleUrl);
     await page.getByRole("button", { name: "Shorten", exact: true }).click();
     await page.locator(".result .short-link").waitFor();
     // Park the focus and pointer so no hover or focus ring shows in the picture.
