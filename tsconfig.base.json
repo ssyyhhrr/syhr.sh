@@ -1,0 +1,34 @@
+{
+  // Shared compiler settings. Each environment (Node, browser, end-to-end tests) has its own
+  // tsconfig.json that extends this and picks the right globals, so server code can't touch
+  // `document` and browser code can't touch `process`.
+  //
+  // Node runs the .ts files directly by stripping types; it cannot transform them. So nothing
+  // here may need a compile step: no enums, namespaces or parameter properties
+  // (erasableSyntaxOnly), and imports keep their .ts extensions.
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": false,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "useUnknownInCatchVariables": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  }
+}

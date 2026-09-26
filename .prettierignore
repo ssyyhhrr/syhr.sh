@@ -1,0 +1,11 @@
+# Generated or third-party output.
+package-lock.json
+dist/
+.cache/
+test-results/
+playwright-report/
+tests/fixtures/
+# Pre-overhaul files, deleted as the rewrite replaces them.
+app.js
+views/
+assets/

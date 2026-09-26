@@ -1,3 +1,13 @@
-node_modules
-data.db
-.idea
+node_modules/
+# Build output (bundled browser assets).
+dist/
+# Tooling caches, e.g. the pre-overhaul app extracted from git history for the legacy tests.
+.cache/
+# Playwright output: traces, screenshots and the HTML report.
+test-results/
+playwright-report/
+# The database the app creates when run locally (DATABASE_PATH defaults to ./data/syhr.db).
+data/
+# Local environment overrides; never commit secrets.
+.env
+.idea/

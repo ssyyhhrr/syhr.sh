@@ -1,0 +1,11 @@
+{
+  // Node-side code: the server, CLI, pure core, build scripts and the Vitest suites.
+  // No DOM types, so server code can't accidentally reach for browser globals.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024"],
+    "types": ["node"]
+  },
+  "include": ["src", "scripts", "tests", "*.ts"],
+  "exclude": ["node_modules", "dist", ".cache", "src/browser", "tests/e2e"]
+}

@@ -37,6 +37,7 @@
 ---
 
 <!-- ABOUT THE PROJECT -->
+
 ## 🔗 About The Project
 
 <p float="left">
@@ -48,6 +49,7 @@ syhr.sh is a lightweight URL shortener for creating short, memorable, and sharea
 ---
 
 <!-- USAGE -->
+
 ## 🚀 Usage
 
 Visit [https://syhr.sh/](https://syhr.sh/) to start shortening links instantly — no setup required.
@@ -55,6 +57,7 @@ Visit [https://syhr.sh/](https://syhr.sh/) to start shortening links instantly �
 ---
 
 <!-- CONTRIBUTING -->
+
 ## 🤝 Contributing
 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
@@ -70,6 +73,7 @@ Don't forget to give the project a star! Thanks again!
 ---
 
 <!-- LICENSE -->
+
 ## 📄 License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
@@ -77,6 +81,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 ---
 
 <!-- CONTACT -->
+
 ## 📬 Contact
 
 Rhys Bishop - [https://sy.hr/](https://sy.hr/) - mail@rhysbi.shop
@@ -85,6 +90,7 @@ Project Link: [https://github.com/ssyyhhrr/syhr.sh](https://github.com/ssyyhhrr/
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
 [contributors-shield]: https://img.shields.io/github/contributors/ssyyhhrr/syhr.sh.svg?style=for-the-badge
 [contributors-url]: https://github.com/ssyyhhrr/syhr.sh/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/ssyyhhrr/syhr.sh.svg?style=for-the-badge
