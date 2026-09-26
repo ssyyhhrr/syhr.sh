@@ -18,6 +18,10 @@ const hostOf = (url: string) => new URL(url).hostname;
 describe("isPrivateHost", () => {
   it.each([
     "http://localhost/",
+    "http://localhost.localdomain/",
+    "http://nas.localdomain/",
+    "http://printer.home/",
+    "http://wiki.corp/",
     "http://LOCALHOST./",
     "http://app.localhost/",
     "http://printer.local/",
