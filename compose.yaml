@@ -1,0 +1,22 @@
+# Example deployment: syhr.sh behind a reverse proxy on the same host (Caddy, nginx, Traefik)
+# that terminates TLS and forwards to 127.0.0.1:4000.
+#
+#   docker compose up -d
+#   docker exec syhrsh syhr links list
+services:
+  syhrsh:
+    image: syhr/syhrsh:latest
+    container_name: syhrsh
+    restart: unless-stopped
+    environment:
+      PUBLIC_URL: https://syhr.sh
+      # The proxy on this host appends the visitor's address to X-Forwarded-For.
+      TRUST_PROXY: "1"
+    ports:
+      # Only reachable through the proxy, not from outside the host.
+      - "127.0.0.1:4000:4000"
+    volumes:
+      - syhrsh-data:/data
+
+volumes:
+  syhrsh-data:
