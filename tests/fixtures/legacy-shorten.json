@@ -1,0 +1,114 @@
+{
+  "generatedBy": "scripts/fixtures/record-legacy.ts",
+  "commit": "7af3bb7250d712c55243ae9da3548da258e652fa",
+  "cases": [
+    {
+      "input": "example.com",
+      "submitted": "https://example.com",
+      "outcome": "link",
+      "redirectsTo": "https://example.com"
+    },
+    {
+      "input": "https://example.com",
+      "submitted": "https://example.com",
+      "outcome": "link",
+      "redirectsTo": "https://example.com"
+    },
+    {
+      "input": "http://example.com",
+      "submitted": "http://example.com",
+      "outcome": "link",
+      "redirectsTo": "http://example.com"
+    },
+    {
+      "input": "EXAMPLE.COM",
+      "submitted": "https://EXAMPLE.COM",
+      "outcome": "link",
+      "redirectsTo": "https://EXAMPLE.COM"
+    },
+    {
+      "input": "example.com/",
+      "submitted": "https://example.com/",
+      "outcome": "link",
+      "redirectsTo": "https://example.com/"
+    },
+    {
+      "input": "example.com/path/to/page",
+      "submitted": "https://example.com/path/to/page",
+      "outcome": "link",
+      "redirectsTo": "https://example.com/path/to/page"
+    },
+    {
+      "input": "https://example.com:443/port",
+      "submitted": "https://example.com:443/port",
+      "outcome": "link",
+      "redirectsTo": "https://example.com:443/port"
+    },
+    {
+      "input": "https://example.org/search?q=one+two",
+      "submitted": "https://example.org/search?q=one+two",
+      "outcome": "link",
+      "redirectsTo": "https://example.org/search?q=one%20two"
+    },
+    {
+      "input": "https://example.com/list?a=1&b=2",
+      "submitted": "https://example.com/list?a=1&b=2",
+      "outcome": "link",
+      "redirectsTo": "https://example.com/list?a=1"
+    },
+    {
+      "input": "https://example.net/page#section",
+      "submitted": "https://example.net/page#section",
+      "outcome": "link",
+      "redirectsTo": "https://example.net/page#section"
+    },
+    {
+      "input": "https://example.com/caf%C3%A9",
+      "submitted": "https://example.com/caf%C3%A9",
+      "outcome": "link",
+      "redirectsTo": "https://example.com/caf%C3%A9"
+    },
+    {
+      "input": "syhr.sh",
+      "submitted": null,
+      "outcome": "refused",
+      "redirectsTo": null
+    },
+    {
+      "input": "http://syhr.sh",
+      "submitted": null,
+      "outcome": "refused",
+      "redirectsTo": null
+    },
+    {
+      "input": "https://syhr.sh/kachow",
+      "submitted": null,
+      "outcome": "refused",
+      "redirectsTo": null
+    },
+    {
+      "input": "not a url",
+      "submitted": null,
+      "outcome": "refused",
+      "redirectsTo": null
+    },
+    {
+      "input": "localhost",
+      "submitted": null,
+      "outcome": "refused",
+      "redirectsTo": null
+    },
+    {
+      "input": "ftp://example.com",
+      "submitted": null,
+      "outcome": "refused",
+      "redirectsTo": null
+    },
+    {
+      "input": "javascript:alert(1)",
+      "submitted": null,
+      "outcome": "refused",
+      "redirectsTo": null
+    }
+  ]
+}
