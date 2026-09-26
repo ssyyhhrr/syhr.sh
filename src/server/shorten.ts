@@ -1,11 +1,11 @@
 /**
- * Creating a short link: apply the rules, reuse the existing link for a URL we've seen, or
- * store a new one under a free random slug. The one place both the JSON API and the
+ * Shortening a link for a visitor: apply the rules, charge the client's rate limit, then store
+ * the link (or return the one already stored). The one place both the JSON API and the
  * no-JavaScript form go through, so they can't drift apart.
  */
 import { evaluateLink, type Refusal } from "../core/links.ts";
 import { rateLimitMessage } from "../core/rate-limit.ts";
-import { generateSlug, pickFreeSlug, shortUrlFor } from "../core/slugs.ts";
+import { linkPolicy, saveLink, type SavedLink } from "./links.ts";
 import type { RateLimiter } from "./rate-limiter.ts";
 import type { Store } from "./store.ts";
 
@@ -20,7 +20,7 @@ export interface ShortenContext {
 
 /** The outcome of one attempt to shorten a link. */
 export type ShortenResult =
-  | { kind: "created" | "existing"; slug: string; shortUrl: string; url: string }
+  | SavedLink
   | { kind: "refused"; refusal: Refusal }
   | { kind: "rate_limited"; retryAfterMs: number; message: string };
 
@@ -36,11 +36,7 @@ export function shortenLink(
   input: string,
   clientKey: string,
 ): ShortenResult {
-  const { store } = context;
-  const decision = evaluateLink(input, {
-    ownHost: new URL(context.publicUrl).hostname,
-    blockedDomains: store.blockedDomainSet(),
-  });
+  const decision = evaluateLink(input, linkPolicy(context.store, context.publicUrl));
   if (!decision.ok) return { kind: "refused", refusal: decision.refusal };
 
   const now = context.now();
@@ -52,25 +48,12 @@ export function shortenLink(
       message: rateLimitMessage(allowance.retryAfterMs),
     };
   }
-
-  const existing = store.findByUrl(decision.url);
-  if (existing) {
-    return {
-      kind: "existing",
-      slug: existing.slug,
-      shortUrl: shortUrlFor(context.publicUrl, existing.slug),
-      url: existing.url,
-    };
-  }
-  const slug = pickFreeSlug(
-    () => generateSlug(context.randomBytes),
-    (candidate) => store.hasSlug(candidate),
-  );
-  store.addLink({ slug, url: decision.url, createdAt: now });
-  return {
-    kind: "created",
-    slug,
-    shortUrl: shortUrlFor(context.publicUrl, slug),
-    url: decision.url,
-  };
+  const saved = saveLink(context.store, decision.url, {
+    publicUrl: context.publicUrl,
+    now,
+    randomBytes: context.randomBytes,
+  });
+  // Without a custom slug there's no slug problem to report.
+  if (saved.kind === "slug_problem") throw new Error(`Unexpected slug problem: ${saved.problem}`);
+  return saved;
 }

@@ -7,10 +7,13 @@
  * Exit codes: 0 done, 1 refused or not found, 2 bad arguments or configuration.
  */
 import { randomBytes } from "node:crypto";
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { formatLinkTable, parseCliArgs, USAGE, type CliCommand } from "../core/cli.ts";
 import { ConfigError, parseConfig, type Config } from "../core/config.ts";
-import { evaluateLink, parseDomain, REFUSAL_MESSAGES } from "../core/links.ts";
-import { checkCustomSlug, generateSlug, pickFreeSlug, shortUrlFor } from "../core/slugs.ts";
+import { evaluateLink, parseDomain, refusalMessage } from "../core/links.ts";
+import { shortUrlFor } from "../core/slugs.ts";
+import { linkPolicy, saveLink } from "../server/links.ts";
 import { Store } from "../server/store.ts";
 
 /** Where output goes; the tests read the real process's streams. */
@@ -33,41 +36,30 @@ function run(command: StoreCommand, config: Config, store: Store, io: Io): numbe
   const now = Date.now();
   switch (command.kind) {
     case "links-add": {
-      const decision = evaluateLink(command.url, {
-        ownHost: new URL(config.publicUrl).hostname,
-        blockedDomains: store.blockedDomainSet(),
-      });
+      const decision = evaluateLink(command.url, linkPolicy(store, config.publicUrl));
       if (!decision.ok) {
-        io.err(REFUSAL_MESSAGES[decision.refusal]);
+        io.err(refusalMessage(decision.refusal, new URL(config.publicUrl).hostname));
         return 1;
       }
-      if (command.slug === undefined) {
-        const existing = store.findByUrl(decision.url);
-        if (existing) {
-          io.out(`Already shortened: ${shortUrlFor(config.publicUrl, existing.slug)}`);
-          return 0;
-        }
-      }
-      let slug: string;
-      if (command.slug === undefined) {
-        slug = pickFreeSlug(
-          () => generateSlug(randomBytes),
-          (candidate) => store.hasSlug(candidate),
+      const saved = saveLink(store, decision.url, {
+        publicUrl: config.publicUrl,
+        now,
+        randomBytes,
+        slug: command.slug,
+      });
+      if (saved.kind === "slug_problem") {
+        io.err(
+          saved.problem === "taken"
+            ? `The slug "${command.slug ?? ""}" is already in use.`
+            : CUSTOM_SLUG_PROBLEMS[saved.problem],
         );
-      } else {
-        const problem = checkCustomSlug(command.slug);
-        if (problem) {
-          io.err(CUSTOM_SLUG_PROBLEMS[problem]);
-          return 1;
-        }
-        if (store.hasSlug(command.slug)) {
-          io.err(`The slug "${command.slug}" is already in use.`);
-          return 1;
-        }
-        slug = command.slug;
+        return 1;
       }
-      store.addLink({ slug, url: decision.url, createdAt: now });
-      io.out(`Added ${shortUrlFor(config.publicUrl, slug)} -> ${decision.url}`);
+      io.out(
+        saved.kind === "existing"
+          ? `Already shortened: ${saved.shortUrl}`
+          : `Added ${saved.shortUrl} -> ${saved.url}`,
+      );
       return 0;
     }
 
@@ -157,7 +149,18 @@ function main(argv: readonly string[]): number {
     }
     throw error;
   }
-  const store = new Store(config.databasePath);
+  // Never create a database here: a wrong DATABASE_PATH (or running from another directory,
+  // with the relative default) would otherwise edit a new, empty database the server never
+  // reads, and every command would appear to succeed.
+  const databasePath = path.resolve(config.databasePath);
+  if (!existsSync(databasePath)) {
+    io.err(
+      `No database at ${databasePath}. Set DATABASE_PATH to the server's database ` +
+        "(in Docker it's /data/syhr.db, which is already set), or start the server once to create it.",
+    );
+    return 2;
+  }
+  const store = new Store(databasePath);
   try {
     return run(parsed.command, config, store, io);
   } finally {

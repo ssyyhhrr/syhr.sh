@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 import { evaluateLink } from "../../src/core/links.ts";
 import fixture from "../fixtures/legacy-shorten.json" with { type: "json" };
 
-const policy = { ownHost: "syhr.sh", blockedDomains: new Set<string>() };
+const policy = { ownHost: "syhr.sh", isBlocked: () => false };
 
 describe("legacy behaviour", () => {
   const accepted = fixture.cases.filter((c) => c.outcome === "link");

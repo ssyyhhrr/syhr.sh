@@ -59,6 +59,14 @@ describe("the no-JavaScript form", () => {
     expect(body).not.toContain("<script>alert(1)");
   });
 
+  it("answers an oversized submission with the page, not JSON", async () => {
+    const { request } = testApp();
+    const response = await request("/", form(`https://example.com/${"a".repeat(20_000)}`));
+    expect(response.status).toBe(413);
+    expect(response.headers.get("content-type")).toMatch(/text\/html/);
+    expect(await response.text()).toContain("That link is too long");
+  });
+
   it("answers 429 with Retry-After when the client is over the limit", async () => {
     const { request } = testApp({ rateLimitPerMinute: 1 });
     await request("/", form("example.com/1"));

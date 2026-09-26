@@ -4,7 +4,12 @@
  * Everything the server refuses is decided here, with no I/O, so the rules can be tested
  * exhaustively and the same messages appear in the API, the no-JavaScript page and the CLI.
  */
-import { enclosingDomains, isPrivateHost, isWithinDomain } from "./addresses.ts";
+import {
+  enclosingDomains,
+  isPrivateHost,
+  isWithinDomain,
+  withoutTrailingDot,
+} from "./addresses.ts";
 import { isPublicShortener } from "./shorteners.ts";
 
 /** Longest URL accepted, after normalisation. Browsers and proxies handle this everywhere. */
@@ -25,25 +30,37 @@ export type Refusal =
   | "url_shortener"
   | "blocked_domain";
 
-/** Words shown to people for each refusal. */
-export const REFUSAL_MESSAGES: Readonly<Record<Refusal, string>> = {
+const MESSAGES: Readonly<Record<Exclude<Refusal, "own_domain">, string>> = {
   empty: "Paste a link to shorten it.",
   invalid_url: "That isn't a valid web address.",
   unsupported_scheme: "Only http:// and https:// links can be shortened.",
   too_long: `That link is too long (the limit is ${MAX_URL_LENGTH} characters).`,
   has_credentials: "Links with a username or password in them can't be shortened.",
-  own_domain: "Links to syhr.sh can't be shortened again.",
   private_address: "That address only works inside a private network.",
   url_shortener: "That's already a short link. Paste the address it leads to instead.",
   blocked_domain: "Links to that site can't be shortened here.",
 };
 
+/**
+ * The words shown to people for a refusal. `ownHost` is the site's own hostname (from
+ * PUBLIC_URL), which the own-domain message names, so a self-hosted copy doesn't talk about
+ * syhr.sh.
+ */
+export function refusalMessage(refusal: Refusal, ownHost: string): string {
+  return refusal === "own_domain"
+    ? `Links to ${ownHost} can't be shortened again.`
+    : MESSAGES[refusal];
+}
+
 /** What the rules need to know about the site and its owner's choices. */
 export interface LinkPolicy {
   /** The site's own hostname (from `PUBLIC_URL`); links to it or its subdomains loop. */
   ownHost: string;
-  /** Domains the owner has blocked, lowercase; their subdomains are blocked too. */
-  blockedDomains: ReadonlySet<string>;
+  /**
+   * Whether the owner has blocked this host (or a domain it's under). Asked last, after every
+   * cheap check, because it's a database lookup.
+   */
+  isBlocked: (host: string) => boolean;
 }
 
 /** Outcome of {@link evaluateLink}: the URL to store, or why not. */
@@ -98,9 +115,7 @@ export function evaluateLink(input: string, policy: LinkPolicy): LinkDecision {
   if (isWithinDomain(host, policy.ownHost)) return { ok: false, refusal: "own_domain" };
   if (isPrivateHost(host)) return { ok: false, refusal: "private_address" };
   if (isPublicShortener(host)) return { ok: false, refusal: "url_shortener" };
-  if (isBlockedHost(host, policy.blockedDomains)) {
-    return { ok: false, refusal: "blocked_domain" };
-  }
+  if (policy.isBlocked(host)) return { ok: false, refusal: "blocked_domain" };
   return { ok: true, url: url.href };
 }
 
@@ -116,6 +131,6 @@ export function isBlockedHost(host: string, blockedDomains: ReadonlySet<string>)
 export function parseDomain(input: string): string | null {
   const url = parseLinkInput(input);
   if (!url || (url.protocol !== "http:" && url.protocol !== "https:")) return null;
-  const host = url.hostname.replace(/\.$/, "");
+  const host = withoutTrailingDot(url.hostname);
   return host.includes(".") && !host.startsWith("[") ? host : null;
 }

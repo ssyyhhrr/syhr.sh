@@ -8,7 +8,7 @@ import { bodyLimit } from "hono/body-limit";
 import { secureHeaders } from "hono/secure-headers";
 import { clientIp, rateLimitKey } from "../core/client-ip.ts";
 import type { Config } from "../core/config.ts";
-import { REFUSAL_MESSAGES, type Refusal } from "../core/links.ts";
+import { refusalMessage, type Refusal } from "../core/links.ts";
 import { looksLikeSlug } from "../core/slugs.ts";
 import { errorFields, type Logger } from "./log.ts";
 import { renderPage, type PageAssets, type PageState } from "./page.ts";
@@ -106,12 +106,22 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
       }),
     );
 
-  const page = (c: AppContext, state: PageState, status: 200 | 400 | 404 | 422 | 429 = 200) =>
+  // Any context will do (it only renders): bodyLimit's error handler gets an untyped one.
+  const page = (c: Context, state: PageState, status: 200 | 400 | 404 | 413 | 422 | 429 = 200) =>
     c.html(renderPage(state, deps.page), status);
 
-  const limitBody = bodyLimit({
+  const ownHost = new URL(config.publicUrl).hostname;
+  const messageFor = (refusal: Refusal) => refusalMessage(refusal, ownHost);
+
+  // The API answers an oversized body in JSON; the no-JavaScript form answers with the page,
+  // since a person is looking at it.
+  const limitApiBody = bodyLimit({
     maxSize: MAX_BODY_BYTES,
     onError: (c) => c.json({ error: "too_large", message: "That request is too large." }, 413),
+  });
+  const limitFormBody = bodyLimit({
+    maxSize: MAX_BODY_BYTES,
+    onError: (c) => page(c, { variant: "home", error: messageFor("too_long") }, 413),
   });
 
   // `strict: false` makes /Ab3dE9/ match the same route as /Ab3dE9, so the old
@@ -149,7 +159,7 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
   app.get("/", (c) => page(c, { variant: "home" }));
 
   // The no-JavaScript path: the form posts here and gets the page back with the outcome.
-  app.post("/", limitBody, async (c) => {
+  app.post("/", limitFormBody, async (c) => {
     const form = await c.req.parseBody();
     const input = typeof form["url"] === "string" ? form["url"] : "";
     const outcome = shortenLink(shortenContext, input, clientKey(c));
@@ -164,7 +174,7 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
       case "refused":
         return page(
           c,
-          { variant: "home", input, error: REFUSAL_MESSAGES[outcome.refusal] },
+          { variant: "home", input, error: messageFor(outcome.refusal) },
           REFUSAL_STATUS[outcome.refusal],
         );
       case "rate_limited":
@@ -173,7 +183,7 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
     }
   });
 
-  app.post("/api/links", limitBody, async (c) => {
+  app.post("/api/links", limitApiBody, async (c) => {
     if (!c.req.header("content-type")?.toLowerCase().startsWith("application/json")) {
       return c.json({ error: "unsupported_media_type", message: "Send JSON." }, 415);
     }
@@ -182,7 +192,7 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
     if (typeof url !== "string") {
       return c.json({ error: "invalid_request", message: 'Send {"url": "..."}.' }, 400);
     }
-    return apiResponse(c, shortenLink(shortenContext, url, clientKey(c)));
+    return apiResponse(c, shortenLink(shortenContext, url, clientKey(c)), messageFor);
   });
 
   app.get("/favicon.ico", (c) => serveFile(c, deps.files.get("/favicon.ico")));
@@ -211,7 +221,11 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
   return app;
 }
 
-function apiResponse(c: AppContext, outcome: ShortenResult): Response {
+function apiResponse(
+  c: AppContext,
+  outcome: ShortenResult,
+  messageFor: (refusal: Refusal) => string,
+): Response {
   switch (outcome.kind) {
     case "created":
     case "existing":
@@ -221,7 +235,7 @@ function apiResponse(c: AppContext, outcome: ShortenResult): Response {
       );
     case "refused":
       return c.json(
-        { error: outcome.refusal, message: REFUSAL_MESSAGES[outcome.refusal] },
+        { error: outcome.refusal, message: messageFor(outcome.refusal) },
         REFUSAL_STATUS[outcome.refusal],
       );
     case "rate_limited": {

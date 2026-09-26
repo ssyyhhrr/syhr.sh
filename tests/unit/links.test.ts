@@ -6,15 +6,19 @@
 import { describe, expect, it } from "vitest";
 import {
   evaluateLink,
+  isBlockedHost,
   MAX_URL_LENGTH,
   parseDomain,
   parseLinkInput,
-  REFUSAL_MESSAGES,
+  refusalMessage,
   type LinkPolicy,
   type Refusal,
 } from "../../src/core/links.ts";
 
-const policy: LinkPolicy = { ownHost: "syhr.sh", blockedDomains: new Set(["evil.example"]) };
+const policy: LinkPolicy = {
+  ownHost: "syhr.sh",
+  isBlocked: (host) => isBlockedHost(host, new Set(["evil.example"])),
+};
 
 const accepted = (input: string) => {
   const decision = evaluateLink(input, policy);
@@ -86,8 +90,39 @@ describe("refusals", () => {
     expect(refusal("x".repeat(100_000))).toBe("too_long");
   });
 
-  it("has a message for every refusal", () => {
-    for (const message of Object.values(REFUSAL_MESSAGES)) expect(message).toMatch(/\.$/);
+  it("has a message for every refusal, naming the site's own host where relevant", () => {
+    const refusals: Refusal[] = [
+      "empty",
+      "invalid_url",
+      "unsupported_scheme",
+      "too_long",
+      "has_credentials",
+      "own_domain",
+      "private_address",
+      "url_shortener",
+      "blocked_domain",
+    ];
+    for (const refusal of refusals) expect(refusalMessage(refusal, "syhr.sh")).toMatch(/\.$/);
+    expect(refusalMessage("own_domain", "short.example")).toBe(
+      "Links to short.example can't be shortened again.",
+    );
+  });
+
+  it("only asks about blocked domains once every cheaper rule has passed", () => {
+    const asked: string[] = [];
+    const counting: LinkPolicy = {
+      ownHost: "syhr.sh",
+      isBlocked: (host) => {
+        asked.push(host);
+        return false;
+      },
+    };
+    for (const input of ["", "not a url", "https://syhr.sh/x", "http://10.0.0.1/", "bit.ly/x"]) {
+      evaluateLink(input, counting);
+    }
+    expect(asked).toEqual([]);
+    evaluateLink("example.com", counting);
+    expect(asked).toEqual(["example.com"]);
   });
 });
 

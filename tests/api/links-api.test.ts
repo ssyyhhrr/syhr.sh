@@ -30,10 +30,16 @@ describe("POST /api/links", () => {
     expect(((await again.json()) as LinkBody).slug).toBe(first.slug);
   });
 
-  it("builds links on PUBLIC_URL", async () => {
-    const { shorten } = testApp({ publicUrl: "http://localhost:4000" });
+  it("builds links on PUBLIC_URL, and treats that host as its own", async () => {
+    const { shorten } = testApp({ publicUrl: "https://short.example" });
     const body = (await (await shorten("example.com")).json()) as LinkBody;
-    expect(body.shortUrl).toBe(`http://localhost:4000/${body.slug}`);
+    expect(body.shortUrl).toBe(`https://short.example/${body.slug}`);
+    const own = await shorten("https://short.example/abc");
+    expect(await own.json()).toMatchObject({
+      error: "own_domain",
+      message: "Links to short.example can't be shortened again.",
+    });
+    expect((await shorten("https://syhr.sh/abc")).status).toBe(201);
   });
 
   it.each([

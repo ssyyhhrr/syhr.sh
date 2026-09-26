@@ -4,7 +4,7 @@
  * custom slugs and abuse reports, so it must do exactly what it says, and nothing else.
  */
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -19,6 +19,8 @@ let database = "";
 beforeEach(() => {
   dir = mkdtempSync(path.join(tmpdir(), "syhr-cli-"));
   database = path.join(dir, "syhr.db");
+  // The server creates the database; the CLI only ever opens an existing one.
+  new Store(database).close();
 });
 afterEach(() => {
   rmSync(dir, { recursive: true, force: true });
@@ -152,6 +154,14 @@ describe("syhr itself", () => {
       env: { ...process.env, PORT: "not a port" },
     });
     expect(output).toContain("syhr links add <url>");
+  });
+
+  it("refuses to create a database, so a wrong DATABASE_PATH can't fail silently", () => {
+    rmSync(database);
+    const result = syhr("links", "add", "example.com");
+    expect(result.code).toBe(2);
+    expect(result.err).toContain(`No database at ${database}`);
+    expect(existsSync(database)).toBe(false);
   });
 
   it("rejects unknown commands with usage and exit code 2", () => {

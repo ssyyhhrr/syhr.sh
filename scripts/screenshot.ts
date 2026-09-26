@@ -26,14 +26,7 @@ const env = {
   HOST: "127.0.0.1",
   DATABASE_PATH: path.join(dataDir, "db"),
 };
-// Store the example link under a fixed slug first. Shortening it in the page then returns that
-// link (dedup), so the images don't change with every random slug.
 const exampleUrl = "https://github.com/ssyyhhrr/syhr.sh";
-execFileSync(
-  process.execPath,
-  ["src/cli/main.ts", "links", "add", exampleUrl, "--slug", "Ab3dE9"],
-  { cwd: root, env },
-);
 const server = spawn(process.execPath, ["src/server/main.ts"], { cwd: root, stdio: "ignore", env });
 
 try {
@@ -45,6 +38,14 @@ try {
     if (up) break;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
+  // Store the example link under a fixed slug (the server has created the database by now).
+  // Shortening it in the page then returns that link (dedup), so the images don't change with
+  // every random slug.
+  execFileSync(
+    process.execPath,
+    ["src/cli/main.ts", "links", "add", exampleUrl, "--slug", "Ab3dE9"],
+    { cwd: root, env },
+  );
   const browser = await chromium.launch(chromiumLaunchOptions());
   const sizes = {
     desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
