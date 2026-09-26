@@ -1,0 +1,10 @@
+{
+  // Playwright specs run in Node but pass callbacks into the page, so they see both Node's and
+  // the DOM's types.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": ["node"]
+  },
+  "include": [".", "../support", "../../playwright.config.ts"]
+}
