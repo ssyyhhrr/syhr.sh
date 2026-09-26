@@ -121,12 +121,18 @@ describe("other routes", () => {
 
   it("logs each request without the client's IP", async () => {
     const { request, logs } = testApp();
-    await request("/healthz", {}, "203.0.113.77");
+    await request("/nope12", {}, "203.0.113.77");
     expect(logs).toContainEqual({
       level: "info",
       message: "request",
-      fields: expect.objectContaining({ method: "GET", path: "/healthz", status: 200 }) as unknown,
+      fields: expect.objectContaining({ method: "GET", path: "/nope12", status: 404 }) as unknown,
     });
     expect(JSON.stringify(logs)).not.toContain("203.0.113.77");
+  });
+
+  it("doesn't log successful health checks, which Docker makes every 30 seconds", async () => {
+    const { request, logs } = testApp();
+    await request("/healthz");
+    expect(logs).toEqual([]);
   });
 });

@@ -121,6 +121,8 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
   app.use(async (c, next) => {
     const started = performance.now();
     await next();
+    // Docker probes /healthz every 30 seconds; logging each success would bury real traffic.
+    if (c.req.path === "/healthz" && c.res.ok) return;
     log("info", "request", {
       method: c.req.method,
       path: c.req.path,
