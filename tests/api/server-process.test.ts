@@ -60,6 +60,24 @@ describe("the server process", () => {
     expect(server.output()).toContain('"message":"shutting down"');
   });
 
+  it("exits with a logged error when its port is taken", async () => {
+    const blocker = createServer();
+    const port = await new Promise<number>((resolve) => {
+      blocker.listen(0, "127.0.0.1", () => {
+        const address = blocker.address();
+        resolve(typeof address === "object" && address ? address.port : 0);
+      });
+    });
+    try {
+      const server = startServer({ PORT: String(port) });
+      expect(await server.exited).toBe(1);
+      expect(server.output()).toContain('"message":"failed to start"');
+      expect(server.output()).toContain("EADDRINUSE");
+    } finally {
+      blocker.close();
+    }
+  });
+
   it("refuses to start with bad settings, naming each one", async () => {
     const server = startServer({ PORT: "nope", PUBLIC_URL: "syhr.sh" });
     expect(await server.exited).toBe(1);
