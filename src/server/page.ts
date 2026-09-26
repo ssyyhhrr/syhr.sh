@@ -18,19 +18,22 @@ import {
   type ProfileLink,
 } from "../content/site.ts";
 
+/** Every icon the page draws: the footer's services plus the result card's actions. */
+export type IconName = ProfileLink["service"] | "copy" | "share";
+
 /** The built browser files to include (see server/assets.ts). */
 export interface PageAssets {
   styles: readonly string[];
   scripts: readonly string[];
-  /** Renders a footer icon as inline SVG; returns "" if icons aren't available. */
-  icon: (service: ProfileLink["service"]) => string;
+  /** Renders an icon as inline SVG markup; returns "" if icons aren't available. */
+  icon: (name: IconName) => string;
 }
 
 /** Everything that varies between renders of the page. */
 export interface PageState {
   /** "notFound" adds the missing-link notice and a different title. */
   variant: "home" | "notFound";
-  /** What's in the box: echoed back after a refusal so it can be corrected. */
+  /** What's in the box: echoed back so it can be corrected or reused. */
   input?: string;
   /** Set after a successful shorten. */
   result?: { shortUrl: string; url: string };
@@ -64,7 +67,7 @@ function footer(assets: PageAssets): Html {
   </footer>`;
 }
 
-function result(state: PageState): Html {
+function result(state: PageState, assets: PageAssets): Html {
   const shown = state.result;
   return html`<section class="result" aria-labelledby="result-title" ${shown ? "" : raw("hidden")}>
     <h2 class="result-title" id="result-title">Your short link</h2>
@@ -73,8 +76,12 @@ function result(state: PageState): Html {
     </p>
     <p class="result-target">Goes to <span class="result-url">${shown?.url ?? ""}</span></p>
     <div class="result-actions">
-      <button type="button" class="action needs-js" data-action="copy">Copy</button>
-      <button type="button" class="action needs-js" data-action="share" hidden>Share</button>
+      <button type="button" class="action needs-js" data-action="copy">
+        ${raw(assets.icon("copy"))}<span class="action-label">Copy</span>
+      </button>
+      <button type="button" class="action needs-js" data-action="share" hidden>
+        ${raw(assets.icon("share"))}<span class="action-label">Share</span>
+      </button>
       <a class="action action-secondary" href="/" data-action="again">Shorten another</a>
     </div>
     <div class="qr needs-js" role="img" aria-label="QR code for the short link"></div>
@@ -101,7 +108,7 @@ export function renderPage(state: PageState, assets: PageAssets): Html {
         <canvas class="waves" aria-hidden="true"></canvas>
         <main class="shell">
           <header class="intro">
-            <h1 class="title">${SITE_NAME}</h1>
+            <h1 class="title">${SITE_NAME.replace(/\.sh$/, "")}<span class="tld">.sh</span></h1>
             <p class="tagline">
               ${TAGLINE.before}<a href="${OWNER_URL}">${TAGLINE.linkText}</a>${TAGLINE.after}
             </p>
@@ -125,7 +132,7 @@ export function renderPage(state: PageState, assets: PageAssets): Html {
                 autocapitalize="off"
                 spellcheck="false"
                 placeholder="${INPUT_PLACEHOLDER}"
-                value="${state.result ? "" : (state.input ?? "")}"
+                value="${state.input ?? ""}"
                 aria-describedby="form-error"
                 ${error ? raw('aria-invalid="true"') : ""}
               />
@@ -136,7 +143,7 @@ export function renderPage(state: PageState, assets: PageAssets): Html {
             </div>
             <p class="form-error" id="form-error" role="alert">${error}</p>
           </form>
-          ${result(state)}
+          ${result(state, assets)}
         </main>
         ${footer(assets)}
       </body>

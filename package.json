@@ -11,10 +11,11 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test:unit && npm run test:e2e",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run build && npm run test:unit && npm run test:e2e",
     "test": "npm run check",
     "start": "node src/server/main.ts",
-    "typecheck": "tsc -p tsconfig.json && tsc -p tests/e2e/tsconfig.json",
+    "build": "node scripts/build.ts",
+    "typecheck": "tsc -p tsconfig.json && tsc -p src/browser/tsconfig.json && tsc -p tests/e2e/tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -25,17 +26,30 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@fontsource/raleway": "^5.3.0",
+    "@fortawesome/free-brands-svg-icons": "^7.3.1",
+    "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.19.0",
+    "@types/pngjs": "^6.0.5",
+    "esbuild": "^0.28.2",
     "eslint": "^10.11.0",
     "globals": "^17.12.0",
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0",
     "prettier": "^3.9.9",
+    "simple-icons": "^16.32.0",
+    "simplex-noise": "^4.0.3",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.70.1",
+    "uqr": "^0.1.3",
     "vitest": "^5.0.2"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.1",
     "hono": "^4.13.9"
+  },
+  "allowScripts": {
+    "esbuild": false
   }
 }

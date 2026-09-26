@@ -10,12 +10,15 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { buildAssets } from "../../../scripts/build.ts";
 import { startLegacyApp } from "../../support/legacy.ts";
 import { E2E_PORT, e2eTarget, PUBLIC_ORIGIN } from "./target.ts";
 
 const repoRoot = path.resolve(import.meta.dirname, "../../..");
 
-function startNewApp(): { child: ChildProcess; cleanUp: () => void } {
+async function startNewApp(): Promise<{ child: ChildProcess; cleanUp: () => void }> {
+  // Always build first, so the suite can never pass against stale browser assets.
+  await buildAssets();
   const dataDir = mkdtempSync(path.join(tmpdir(), "syhr-e2e-"));
   const child = spawn(process.execPath, ["src/server/main.ts"], {
     cwd: repoRoot,
@@ -37,7 +40,9 @@ function startNewApp(): { child: ChildProcess; cleanUp: () => void } {
 }
 
 const { child, cleanUp } =
-  e2eTarget() === "legacy" ? { child: startLegacyApp(), cleanUp: () => undefined } : startNewApp();
+  e2eTarget() === "legacy"
+    ? { child: startLegacyApp(), cleanUp: () => undefined }
+    : await startNewApp();
 
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.on(signal, () => child.kill(signal));

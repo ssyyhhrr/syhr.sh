@@ -18,7 +18,11 @@ import type { Store } from "./store.ts";
 
 /** A file served as-is: the favicon, and the built CSS and JS. */
 export interface StaticFile {
-  body: Uint8Array;
+  /**
+   * The exact bytes, in a buffer of their own. Never pass a Node Buffer's `.buffer`: small
+   * Buffers are views into a shared pool, and `.buffer` is the whole pool.
+   */
+  body: Uint8Array<ArrayBuffer>;
   contentType: string;
   /** Content-hashed names never change content, so browsers may cache them for good. */
   immutable: boolean;
@@ -66,6 +70,7 @@ const CONTENT_SECURITY_POLICY = {
 
 /** HTTP status for each refusal: malformed input is 400, input we won't accept is 422. */
 const REFUSAL_STATUS: Readonly<Record<Refusal, 400 | 422>> = {
+  empty: 400,
   invalid_url: 400,
   unsupported_scheme: 400,
   too_long: 400,
@@ -151,6 +156,7 @@ export function createApp(deps: AppDependencies): Hono<{ Bindings: Bindings }> {
       case "existing":
         return page(c, {
           variant: "home",
+          input,
           result: { shortUrl: outcome.shortUrl, url: outcome.url },
         });
       case "refused":
@@ -231,5 +237,5 @@ function serveFile(c: AppContext, file: StaticFile | undefined): Response {
     "Cache-Control",
     file.immutable ? "public, max-age=31536000, immutable" : "public, max-age=86400",
   );
-  return c.body(file.body.slice().buffer);
+  return c.body(file.body);
 }
