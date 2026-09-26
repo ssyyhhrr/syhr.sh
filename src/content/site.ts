@@ -22,7 +22,7 @@ export const OWNER_URL = "https://sy.hr";
 /** Placeholder in the URL box. */
 export const INPUT_PLACEHOLDER = "Paste a long link";
 
-/** Services with an icon in the footer (see src/content/icons.ts). */
+/** Services with an icon in the footer (resolved to SVG in scripts/icons.ts). */
 export type ProfileService =
   "discord" | "github" | "letterboxd" | "spotify" | "steam" | "tryhackme" | "youtube" | "email";
 

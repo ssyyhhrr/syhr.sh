@@ -8,6 +8,7 @@
 import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { enclosingDomains } from "../core/addresses.ts";
 import { isBlockedHost } from "../core/links.ts";
 
 /** Bump when the schema changes, and add a step to `#migrate`. */
@@ -124,10 +125,17 @@ export class Store {
     return (rows as unknown as LinkRow[]).map(toLink);
   }
 
-  /** The blocked domains, as a set for {@link isBlockedHost}. */
-  blockedDomainSet(): Set<string> {
-    const rows = this.#db.prepare("SELECT domain FROM blocked_domains").all();
-    return new Set((rows as unknown as { domain: string }[]).map((row) => row.domain));
+  /**
+   * Whether `host`, or any domain it sits under, is blocked: one indexed lookup of its
+   * enclosing domains, however many domains are blocked.
+   */
+  isHostBlocked(host: string): boolean {
+    const domains = enclosingDomains(host);
+    const placeholders = domains.map(() => "?").join(", ");
+    const row = this.#db
+      .prepare(`SELECT 1 FROM blocked_domains WHERE domain IN (${placeholders}) LIMIT 1`)
+      .get(...domains);
+    return row !== undefined;
   }
 
   /** Every blocked domain, alphabetically. */

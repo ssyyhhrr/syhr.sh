@@ -78,7 +78,9 @@ describe("Store", () => {
     const deleted = store.blockDomain("evil.example", 10);
     expect(deleted.map((l) => l.slug).sort()).toEqual(["a", "b"]);
     expect(store.hasSlug("c")).toBe(true);
-    expect([...store.blockedDomainSet()]).toEqual(["evil.example"]);
+    expect(store.isHostBlocked("evil.example")).toBe(true);
+    expect(store.isHostBlocked("a.b.evil.example.")).toBe(true);
+    expect(store.isHostBlocked("notevil.example")).toBe(false);
     expect(store.listBlockedDomains()).toEqual([{ domain: "evil.example", createdAt: 10 }]);
     // Blocking again is harmless.
     expect(store.blockDomain("evil.example", 11)).toEqual([]);

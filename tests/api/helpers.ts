@@ -1,7 +1,12 @@
 /**
- * Builds the app over a throwaway in-memory database for API tests, with a controllable clock
- * and a record of everything it logs.
+ * Builds the app for API tests over a real SQLite file in a temporary directory (as in
+ * production: WAL, busy timeout, schema created on first open), with a controllable clock and
+ * a record of everything it logs. Each app's files are removed when its test finishes.
  */
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { onTestFinished } from "vitest";
 import { DEFAULT_CONFIG, type Config } from "../../src/core/config.ts";
 import { createApp, type StaticFile } from "../../src/server/app.ts";
 import type { LogFields, LogLevel } from "../../src/server/log.ts";
@@ -33,9 +38,17 @@ const favicon: StaticFile = {
   immutable: false,
 };
 
-/** A fresh app. `config` overrides the defaults (production domain, 10/min, 100/day). */
+/**
+ * A fresh app over its own database file. `config` overrides the defaults (production domain,
+ * 10/min, 100/day). Call it inside a test.
+ */
 export function testApp(config: Partial<Config> = {}): TestApp {
-  const store = new Store(":memory:");
+  const dir = mkdtempSync(path.join(tmpdir(), "syhr-api-"));
+  const store = new Store(path.join(dir, "syhr.db"));
+  onTestFinished(() => {
+    store.close();
+    rmSync(dir, { recursive: true, force: true });
+  });
   const logs: LogEntry[] = [];
   let now = Date.UTC(2026, 0, 1);
   const app = createApp({
