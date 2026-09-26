@@ -1,0 +1,107 @@
+/* The shorten form: one bar holding the box and the button, and the error line under it. */
+
+/* The form: one bar holding the box and the button. */
+
+.field {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.field:focus-within {
+  border-color: rgba(242, 210, 127, 0.65);
+  box-shadow: 0 0 0 4px rgba(242, 210, 127, 0.14);
+}
+
+#url {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 0.85rem;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--heading);
+  font: inherit;
+  /* 16px or more stops iOS Safari zooming the page when the box is focused. */
+  font-size: max(16px, 1.05rem);
+  font-weight: 600;
+}
+
+#url::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+#url[aria-invalid="true"] {
+  color: var(--error);
+}
+
+.submit {
+  position: relative;
+  flex: none;
+  min-height: 3rem;
+  padding: 0 1.4rem;
+  border: 0;
+  border-radius: 11px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    transform 0.1s;
+}
+
+.submit:hover {
+  background: var(--accent-hover);
+}
+
+.submit:active {
+  transform: scale(0.97);
+}
+
+.submit:disabled {
+  cursor: progress;
+}
+
+.spinner {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: auto;
+  border: 2.5px solid rgba(23, 23, 23, 0.25);
+  border-top-color: var(--on-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.submit.is-busy .submit-label {
+  visibility: hidden;
+}
+
+.submit.is-busy .spinner {
+  display: block;
+}
+
+.form-error {
+  min-height: 1.5em;
+  margin: 0.6rem 0.4rem 0;
+  color: var(--error);
+  font-size: 0.95rem;
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
