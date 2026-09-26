@@ -8,8 +8,25 @@
  * arrive here.
  */
 
-/** Top-level names that never resolve on the public internet. */
-const LOCAL_SUFFIXES = ["localhost", "local", "internal", "lan", "home.arpa", "invalid", "test"];
+/**
+ * Names that never resolve on the public internet: reserved ones (RFC 2606, RFC 6761,
+ * home.arpa), common private conventions (.lan, .internal, and localdomain, which many Linux
+ * systems map to 127.0.0.1 in /etc/hosts), and .home, .corp and .mail, which ICANN will never
+ * delegate because so many private networks already use them.
+ */
+const LOCAL_SUFFIXES = [
+  "localhost",
+  "localdomain",
+  "local",
+  "internal",
+  "lan",
+  "home.arpa",
+  "home",
+  "corp",
+  "mail",
+  "invalid",
+  "test",
+];
 
 /** IPv4 ranges (RFC 6890 and friends) that are not publicly routable, as [address, prefix]. */
 const NON_PUBLIC_IPV4: readonly (readonly [string, number])[] = [
