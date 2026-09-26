@@ -10,11 +10,15 @@
   "engines": {
     "node": ">=24.0.0"
   },
+  "bin": {
+    "syhr": "src/cli/main.ts"
+  },
   "scripts": {
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run build && npm run test:unit && npm run test:e2e",
     "test": "npm run check",
     "start": "node src/server/main.ts",
     "build": "node scripts/build.ts",
+    "cli": "node src/cli/main.ts",
     "typecheck": "tsc -p tsconfig.json && tsc -p src/browser/tsconfig.json && tsc -p tests/e2e/tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",
