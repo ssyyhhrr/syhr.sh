@@ -1,0 +1,32 @@
+# Runs every check on every push: typecheck, lint, formatting, unit tests and the end-to-end
+# suite in Chromium and WebKit (Safari's engine), at desktop and phone sizes.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Full history: the legacy safety-net tests extract the pre-overhaul app from git.
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm run check
+        env:
+          E2E_WEBKIT: "1"
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
