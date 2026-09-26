@@ -44,3 +44,23 @@ export function consumeRateLimits(
   if (retryAfterMs > 0) return { allowed: false, history: kept, retryAfterMs };
   return { allowed: true, history: [...kept, now], retryAfterMs: 0 };
 }
+
+/**
+ * Says how long to wait in words, rounded up so people never retry too early: "30 seconds",
+ * "1 minute", "3 hours".
+ */
+export function describeWait(ms: number): string {
+  const seconds = Math.max(1, Math.ceil(ms / 1000));
+  const [amount, unit] =
+    seconds < 120
+      ? [seconds, "second"]
+      : seconds < 2 * 3600
+        ? [Math.ceil(seconds / 60), "minute"]
+        : [Math.ceil(seconds / 3600), "hour"];
+  return `${amount} ${unit}${amount === 1 ? "" : "s"}`;
+}
+
+/** The message shown when someone has made too many links. */
+export function rateLimitMessage(retryAfterMs: number): string {
+  return `You've made a lot of links. Try again in ${describeWait(retryAfterMs)}.`;
+}

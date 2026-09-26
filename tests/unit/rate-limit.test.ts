@@ -4,7 +4,7 @@
  * real people get locked out.
  */
 import { describe, expect, it } from "vitest";
-import { consumeRateLimits, type RateLimit } from "../../src/core/rate-limit.ts";
+import { consumeRateLimits, describeWait, type RateLimit } from "../../src/core/rate-limit.ts";
 
 const MINUTE = 60_000;
 const DAY = 24 * 60 * MINUTE;
@@ -56,5 +56,21 @@ describe("consumeRateLimits", () => {
   it("forgets events older than the longest window", () => {
     const decision = consumeRateLimits([0, 1, 2], DAY + 10, limits);
     expect(decision.history).toEqual([DAY + 10]);
+  });
+});
+
+describe("describeWait", () => {
+  it.each([
+    [0, "1 second"],
+    [1, "1 second"],
+    [1001, "2 seconds"],
+    [59_000, "59 seconds"],
+    [119_000, "119 seconds"],
+    [120_000, "2 minutes"],
+    [61 * MINUTE, "61 minutes"],
+    [2 * 60 * MINUTE, "2 hours"],
+    [DAY - 20 * MINUTE, "24 hours"],
+  ])("describes %i ms as %s", (ms, words) => {
+    expect(describeWait(ms)).toBe(words);
   });
 });
