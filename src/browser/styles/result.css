@@ -1,0 +1,141 @@
+/* The result card: short link, target, Copy / Share / Shorten another, and the QR code. */
+
+/* The result card. */
+
+.result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title qr"
+    "link qr"
+    "target qr"
+    "actions qr";
+  align-items: start;
+  gap: 0.3rem 1.5rem;
+  margin-top: 0.75rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: rise 0.25s ease-out;
+}
+
+.no-js .result {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "title" "link" "target" "actions";
+}
+
+.result-title {
+  grid-area: title;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.short-link-row {
+  grid-area: link;
+  margin: 0;
+}
+
+/* Monospace, because slugs mix 0/O and l/I/1, which Raleway draws almost identically; people
+   read these links aloud and type them from screenshots. */
+.short-link {
+  color: var(--accent);
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  font-size: clamp(1.3rem, 4.6vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.result-target {
+  grid-area: target;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.92rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.result-url {
+  color: var(--text);
+}
+
+.result-actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.55rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--heading);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.action:hover {
+  background: rgba(255, 255, 255, 0.12);
+  text-decoration: none;
+}
+
+.action.is-done {
+  border-color: rgba(158, 230, 168, 0.45);
+  color: var(--success);
+}
+
+.action-secondary {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text);
+}
+
+.qr {
+  grid-area: qr;
+  width: 7.5rem;
+  height: 7.5rem;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 34rem) {
+  .result {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "title" "link" "target" "actions" "qr";
+  }
+
+  .qr {
+    width: 9rem;
+    height: 9rem;
+    margin-top: 0.75rem;
+  }
+}

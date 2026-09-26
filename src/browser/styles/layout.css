@@ -1,0 +1,45 @@
+/* The page column, the title and tagline, and the "link not found" notice. */
+
+/* Layout: one centred column, vertically centred when it fits; the footer follows it. */
+
+.shell {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 10vh, 7rem) 1.25rem 1.5rem;
+}
+
+.title {
+  margin: 0;
+  color: var(--heading);
+  font-size: clamp(3rem, 11vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.tld {
+  color: var(--accent);
+}
+
+.tagline {
+  max-width: 34rem;
+  margin: 1.1rem 0 2.25rem;
+  font-size: clamp(1.05rem, 2.8vw, 1.25rem);
+  line-height: 1.6;
+}
+
+.notice {
+  margin: -0.75rem 0 1.5rem;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--panel);
+  color: #e6e6e6;
+}

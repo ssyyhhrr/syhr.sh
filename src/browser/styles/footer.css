@@ -1,0 +1,148 @@
+/* The footer: sy.hr's profile row with brand colours and username tooltips. */
+
+/* Footer: sy.hr's profile row. */
+
+.footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+.profiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1.5rem;
+}
+
+.profile {
+  display: inline-block;
+  opacity: 0.85;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+
+.profile:hover,
+.profile:focus-visible {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* Brand colours, as on sy.hr. */
+[data-service="discord"] {
+  color: #5b8dee;
+}
+[data-service="github"] {
+  color: #ac5cd9;
+}
+[data-service="letterboxd"] {
+  color: #ff8000;
+}
+[data-service="spotify"] {
+  color: #39da8a;
+}
+[data-service="steam"] {
+  color: #9090a7;
+}
+[data-service="tryhackme"] {
+  color: #b3e853;
+}
+[data-service="youtube"] {
+  color: #ff3b3b;
+}
+[data-service="email"] {
+  color: #ebeaef;
+}
+
+.copyright {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.copyright a {
+  color: var(--text);
+}
+
+.icon {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
+
+/*
+ * Tooltips above the footer icons. They show on hover, on keyboard focus, and while a finger
+ * is on the icon (:active), since touch screens have no hover.
+ */
+.tooltip {
+  position: relative;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  z-index: 3;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #555;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: normal;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: #555;
+}
+
+/* The icons at either end of the row anchor their tooltips inwards, so a long one (the email
+   address) can't stick out past the screen edge and widen the page on phones. */
+.profiles li:first-child .tooltip-text {
+  left: 0;
+  transform: none;
+}
+.profiles li:first-child .tooltip-text::after {
+  left: 0.75em;
+}
+.profiles li:last-child .tooltip-text {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+.profiles li:last-child .tooltip-text::after {
+  right: 0.75em;
+  left: auto;
+  margin-left: 0;
+  margin-right: -5px;
+}
+
+.tooltip:hover .tooltip-text,
+.tooltip:focus-visible .tooltip-text,
+.tooltip:active .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
