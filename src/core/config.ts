@@ -18,7 +18,7 @@ export interface Config {
   rateLimitPerDay: number;
 }
 
-/** Defaults: the old app's port, the real domain, and the rate limits from docs/spec.md. */
+/** Defaults: the old app's port, the real domain, and 10 links a minute and 100 a day. */
 export const DEFAULT_CONFIG: Readonly<Config> = {
   port: 4000,
   host: "0.0.0.0",

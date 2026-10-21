@@ -12,7 +12,7 @@ import { build } from "esbuild";
 import { APP_ROOT, type AssetManifest } from "../src/server/assets.ts";
 import { ICONS } from "./icons.ts";
 
-/** Browsers the bundle must run in: evergreen desktop, and iOS Safari 17+ (see docs/spec.md). */
+/** Browsers the bundle must run in: evergreen desktop, and iOS Safari 17+. */
 const TARGETS = ["es2022", "chrome120", "firefox120", "safari17"];
 
 /** Builds everything into `outDir` (dist/ by default) and returns the manifest written. */

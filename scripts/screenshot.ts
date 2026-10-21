@@ -1,13 +1,15 @@
 /**
- * Regenerates the README's screenshots (docs/screenshot-desktop.png and
- * docs/screenshot-phone.png) from the real app: builds it, starts it on a throwaway database,
- * shortens a link and captures the result at desktop and phone sizes.
+ * Regenerates the README's screenshots (.github/screenshots/desktop.png and phone.png) from
+ * the real app: builds it, starts it on a throwaway database, shortens a link and captures the
+ * result at desktop and phone sizes.
  *
+ * Each capture is the whole page: the window is stretched to the page's height first, so the
+ * footer is never cut off and the waves (drawn at window size) still fill the picture.
  * Reduced motion is emulated so the waves hold one still frame and the images only change when
  * the page does. Run with: npm run screenshots
  */
 import { execFileSync, spawn } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { chromium } from "@playwright/test";
@@ -15,6 +17,7 @@ import { chromiumLaunchOptions } from "../tests/support/browser.ts";
 import { buildAssets } from "./build.ts";
 
 const root = path.resolve(import.meta.dirname, "..");
+const outDir = path.join(root, ".github", "screenshots");
 const port = 4310;
 const base = `http://127.0.0.1:${port}`;
 
@@ -46,6 +49,7 @@ try {
     ["src/cli/main.ts", "links", "add", exampleUrl, "--slug", "Ab3dE9"],
     { cwd: root, env },
   );
+  mkdirSync(outDir, { recursive: true });
   const browser = await chromium.launch(chromiumLaunchOptions());
   const sizes = {
     desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
@@ -65,11 +69,15 @@ try {
     await page.locator(".result .short-link").waitFor();
     // Park the focus and pointer so no hover or focus ring shows in the picture.
     await page.locator("body").click({ position: { x: 5, y: 5 } });
-    // A string, because this file is type-checked for Node, without DOM globals.
+    // Strings, because this file is type-checked for Node, without DOM globals.
     await page.evaluate("document.fonts.ready");
-    await page.screenshot({ path: path.join(root, "docs", `screenshot-${name}.png`) });
+    const height = Number(await page.evaluate("document.documentElement.scrollHeight"));
+    await page.setViewportSize({ width: options.viewport.width, height });
+    // The waves redraw 150 ms after a resize.
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: path.join(outDir, `${name}.png`) });
     await context.close();
-    console.log(`Wrote docs/screenshot-${name}.png`);
+    console.log(`Wrote .github/screenshots/${name}.png (${options.viewport.width}x${height})`);
   }
   await browser.close();
 } finally {
