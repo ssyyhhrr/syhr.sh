@@ -139,8 +139,8 @@ write access); until they're set, that step is skipped.
 
 ## License
 
-MIT; see [LICENSE.txt](LICENSE.txt). Icons are from Font Awesome Free (CC BY 4.0) and Simple
-Icons (CC0). Raleway is under the SIL Open Font License.
+MIT; see [LICENSE.txt](LICENSE.txt). Icons are from Font Awesome Free (CC BY 4.0). Raleway is
+under the SIL Open Font License.
 
 Made by [syhr](https://sy.hr).
 
@@ -158,7 +158,7 @@ src/
   server/    HTTP (Hono), SQLite store, page rendering, assets, logging, start-up
   cli/       The `syhr` admin command
   browser/   The page's script (waves, form, QR) and stylesheets
-  content/   The page's words and profile links
+  content/   The page's words and links
 public/      Files served as-is (favicon)
 scripts/     Build, screenshots, Docker smoke test, fixture recorder
 tests/       unit/ and api/ (Vitest), e2e/ (Playwright), fixtures/ (generated), support/
@@ -242,9 +242,9 @@ esbuild for the browser. There are two runtime dependencies: Hono and its Node a
   that ran a CSS animation. Use `press("Enter")` on links in no-JavaScript tests.
 - **`fill()` then `press("Backspace")` deletes nothing,** because focusing puts the caret at the
   start. Press `End` first.
-- **On phones, an absolutely positioned tooltip that pokes past the edge widens the layout
-  viewport,** and everything, the canvas included, grows with it. Edge tooltips anchor inwards,
-  `body` has `overflow-x: clip`, and `layout.spec.ts` checks for sideways overflow.
+- **On phones, anything absolutely positioned that pokes past the edge widens the layout
+  viewport,** and everything, the canvas included, grows with it. `body` has
+  `overflow-x: clip`, and `layout.spec.ts` checks for sideways overflow.
 - **Docker gives a container a new ephemeral host port on restart.** Re-read `docker port` after
   `docker restart`.
 - **jsqr is CommonJS with an `__esModule` default,** and tsc (NodeNext) and Playwright's loader

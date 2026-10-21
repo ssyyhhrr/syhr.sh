@@ -22,39 +22,8 @@ export const OWNER_URL = "https://sy.hr";
 /** Placeholder in the URL box. */
 export const INPUT_PLACEHOLDER = "Paste a long link";
 
-/** Services with an icon in the footer (resolved to SVG in scripts/icons.ts). */
-export type ProfileService =
-  "discord" | "github" | "letterboxd" | "spotify" | "steam" | "tryhackme" | "youtube" | "email";
+/** The footer's pointer to the owner's site, as on sy.hr ("Looking for my CV? rhysbi.shop"). */
+export const MORE_LINK = { text: "Looking for more? sy.hr", href: OWNER_URL } as const;
 
-/** One profile link in the footer. */
-export interface ProfileLink {
-  service: ProfileService;
-  /** The service's name, for the accessible label ("GitHub: syhr"). */
-  label: string;
-  /** Short links resolve through redirects on sy.hr's web server, not this app. */
-  href: string;
-  /** Shown in the tooltip. */
-  username: string;
-}
-
-/** sy.hr's profile row, in the same order, with the same links and usernames. */
-export const PROFILE_LINKS: readonly ProfileLink[] = [
-  { service: "discord", label: "Discord", href: "https://sy.hr/discord", username: "sy.hr" },
-  { service: "github", label: "GitHub", href: "https://sy.hr/github", username: "syhr" },
-  {
-    service: "letterboxd",
-    label: "Letterboxd",
-    href: "https://sy.hr/letterboxd",
-    username: "sy_hr",
-  },
-  { service: "spotify", label: "Spotify", href: "https://sy.hr/spotify", username: "syhr" },
-  { service: "steam", label: "Steam", href: "https://sy.hr/steam", username: "syhr" },
-  { service: "tryhackme", label: "TryHackMe", href: "https://sy.hr/tryhackme", username: "sy.hr" },
-  { service: "youtube", label: "YouTube", href: "https://sy.hr/youtube", username: "syhr" },
-  {
-    service: "email",
-    label: "Email",
-    href: "mailto:mail@rhysbi.shop",
-    username: "mail@rhysbi.shop",
-  },
-];
+/** The owner's email address, in the footer. */
+export const EMAIL = "mail@rhysbi.shop";

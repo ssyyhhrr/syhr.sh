@@ -10,16 +10,16 @@ import { html, raw } from "hono/html";
 import type { HtmlEscapedString } from "hono/utils/html";
 import {
   DESCRIPTION,
+  EMAIL,
   INPUT_PLACEHOLDER,
+  MORE_LINK,
   OWNER_URL,
-  PROFILE_LINKS,
   SITE_NAME,
   TAGLINE,
-  type ProfileLink,
 } from "../content/site.ts";
 
-/** Every icon the page draws: the footer's services plus the result card's actions. */
-export type IconName = ProfileLink["service"] | "copy" | "share";
+/** Every icon the page draws: the result card's actions. */
+export type IconName = "copy" | "share";
 
 /** The built browser files to include (see server/assets.ts). */
 export interface PageAssets {
@@ -43,27 +43,25 @@ export interface PageState {
 
 type Html = HtmlEscapedString | Promise<HtmlEscapedString>;
 
-function footer(assets: PageAssets): Html {
-  const links = PROFILE_LINKS.map((link) => {
-    const external = !link.href.startsWith("mailto:");
-    return html`<li>
-      <a
-        class="profile tooltip"
-        href="${link.href}"
-        aria-label="${link.label}: ${link.username}"
-        data-service="${link.service}"
-        ${external ? raw('target="_blank" rel="noopener"') : ""}
-        >${raw(assets.icon(link.service))}<span class="tooltip-text" aria-hidden="true"
-          >${link.username}</span
-        ></a
-      >
-    </li>`;
-  });
+/**
+ * The up-right arrow after the outbound footer link, as on sy.hr. Drawn with strokes, unlike the
+ * filled icons from scripts/icons.ts, so it's written out here. Decorative: the link text says
+ * where it goes.
+ */
+const ARROW = raw(
+  '<svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" ' +
+    'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ' +
+    'aria-hidden="true" focusable="false"><path d="M7 17L17 7"></path><path d="M8 7h9v9"></path></svg>',
+);
+
+/** sy.hr's footer: the copyright, a pointer to sy.hr and the email address. */
+function footer(): Html {
   return html`<footer class="footer">
-    <ul class="profiles" aria-label="syhr elsewhere">
-      ${links}
-    </ul>
-    <p class="copyright">&copy; <a href="${OWNER_URL}">syhr</a></p>
+    <span>&copy; syhr</span>
+    <a class="arrow-link" href="${MORE_LINK.href}" target="_blank" rel="noopener"
+      >${MORE_LINK.text} ${ARROW}</a
+    >
+    <a href="mailto:${EMAIL}">${EMAIL}</a>
   </footer>`;
 }
 
@@ -145,7 +143,7 @@ export function renderPage(state: PageState, assets: PageAssets): Html {
           </form>
           ${result(state, assets)}
         </main>
-        ${footer(assets)}
+        ${footer()}
       </body>
     </html>`;
 }

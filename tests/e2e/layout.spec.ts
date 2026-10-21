@@ -1,6 +1,6 @@
 /**
- * The page's frame at desktop and phone sizes: sy.hr's footer row with working links and
- * tooltips, the self-hosted font, nothing overflowing sideways, and nothing overlapping. These
+ * The page's frame at desktop and phone sizes: sy.hr's footer with working links, the
+ * self-hosted font, nothing overflowing sideways, and nothing overlapping. These
  * are the things that break silently when CSS changes.
  */
 import { expect, test } from "./support/fixtures.ts";
@@ -11,30 +11,16 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test("the footer has sy.hr's profile links, with tooltips", async ({ page }) => {
-  const profiles = page.getByRole("list", { name: "syhr elsewhere" }).getByRole("link");
-  await expect(profiles).toHaveCount(8);
-  const expected: [string, string][] = [
-    ["Discord: sy.hr", "https://sy.hr/discord"],
-    ["GitHub: syhr", "https://sy.hr/github"],
-    ["Letterboxd: sy_hr", "https://sy.hr/letterboxd"],
-    ["Spotify: syhr", "https://sy.hr/spotify"],
-    ["Steam: syhr", "https://sy.hr/steam"],
-    ["TryHackMe: sy.hr", "https://sy.hr/tryhackme"],
-    ["YouTube: syhr", "https://sy.hr/youtube"],
-    ["Email: mail@rhysbi.shop", "mailto:mail@rhysbi.shop"],
-  ];
-  for (const [index, [name, href]] of expected.entries()) {
-    await expect(profiles.nth(index)).toHaveAccessibleName(name);
-    await expect(profiles.nth(index)).toHaveAttribute("href", href);
-  }
-  // Keyboard focus shows the username.
-  await profiles.nth(1).focus();
-  await expect(profiles.nth(1).locator(".tooltip-text")).toBeVisible();
-  await expect(page.getByRole("link", { name: "syhr", exact: true }).last()).toHaveAttribute(
-    "href",
-    "https://sy.hr",
-  );
+test("the footer has sy.hr's links", async ({ page }) => {
+  const footer = page.locator("footer");
+  await expect(footer).toContainText("© syhr");
+  const more = footer.getByRole("link", { name: "Looking for more? sy.hr" });
+  await expect(more).toHaveAttribute("href", "https://sy.hr");
+  await expect(more).toHaveAttribute("target", "_blank");
+  // Not a new tab: that would leave an empty one behind as the mail app opens.
+  const email = footer.getByRole("link", { name: "mail@rhysbi.shop" });
+  await expect(email).toHaveAttribute("href", "mailto:mail@rhysbi.shop");
+  await expect(email).not.toHaveAttribute("target", /./);
 });
 
 test("the page uses the self-hosted Raleway", async ({ page }) => {
