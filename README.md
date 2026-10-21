@@ -139,8 +139,8 @@ write access); until they're set, that step is skipped.
 
 ## License
 
-MIT; see [LICENSE.txt](LICENSE.txt). Icons are from Font Awesome Free (CC BY 4.0). Raleway is
-under the SIL Open Font License.
+MIT; see [LICENSE.txt](LICENSE.txt). Icons are from Font Awesome Free (CC BY 4.0). Bricolage
+Grotesque and IBM Plex Mono are under the SIL Open Font License.
 
 Made by [syhr](https://sy.hr).
 
@@ -191,7 +191,7 @@ esbuild for the browser. There are two runtime dependencies: Hono and its Node a
 - **`src/browser/`** enhances the server-rendered markup, which must keep working without
   JavaScript. `waves.ts` only draws what `core/waves.ts` computes.
 - **`scripts/build.ts`** bundles `src/browser` into hashed files with esbuild, and resolves the
-  icons from Font Awesome and Simple Icons into the manifest.
+  icons from Font Awesome into the manifest.
 - **There are three tsconfigs:** the root one (Node: `src`, `scripts`, `tests`), `src/browser`
   (DOM, no Node types) and `tests/e2e` (both). `npm run typecheck` runs all three.
 

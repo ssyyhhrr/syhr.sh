@@ -7,22 +7,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem 1.5rem;
-  width: min(100% - 2.5rem, 42rem);
+  /* The width of the column's content above it (42rem less the column's padding). */
+  width: min(100% - 2.5rem, 39.5rem);
   margin: 0 auto;
   padding: 1.25rem 0 2rem;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--rule);
   color: var(--muted);
-  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  font-size: 0.875rem;
-}
-
-.footer a {
-  color: inherit;
-}
-
-.footer a:hover {
-  color: var(--accent);
-  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 14px;
 }
 
 /* Links with an arrow after them: 44px tall, so they're easy to tap. */
@@ -41,5 +33,7 @@
   .footer {
     flex-direction: column;
     align-items: flex-start;
+    /* The links are already 44px tall, which spaces the stacked rows. */
+    gap: 0;
   }
 }

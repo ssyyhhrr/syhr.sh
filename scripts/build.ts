@@ -1,6 +1,6 @@
 /**
  * Builds the browser assets into dist/: the script and stylesheet with content-hashed names
- * (so they can be cached forever), the Raleway font files, and dist/manifest.json, which tells
+ * (so they can be cached forever), the font files, and dist/manifest.json, which tells
  * the server what to serve and link (see src/server/assets.ts).
  *
  * Run with: npm run build. The tests and the e2e server build first, so they never run

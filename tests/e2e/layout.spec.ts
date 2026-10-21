@@ -23,10 +23,19 @@ test("the footer has sy.hr's links", async ({ page }) => {
   await expect(email).not.toHaveAttribute("target", /./);
 });
 
-test("the page uses the self-hosted Raleway", async ({ page }) => {
+test("the page uses sy.hr's self-hosted fonts", async ({ page }) => {
   await page.evaluate(() => document.fonts.ready);
-  expect(await page.evaluate(() => document.fonts.check("800 16px Raleway"))).toBe(true);
-  await expect(page.locator(".title")).toHaveCSS("font-family", /Raleway/);
+  // Which faces actually loaded (fonts.check() also passes when no face matches at all).
+  // Browsers differ on whether `family` keeps its quotes, so they're stripped.
+  const loaded = await page.evaluate(() =>
+    [...document.fonts]
+      .filter((face) => face.status === "loaded")
+      .map((face) => face.family.replaceAll('"', "")),
+  );
+  expect(loaded).toContain("Bricolage Grotesque Variable");
+  expect(loaded).toContain("IBM Plex Mono");
+  await expect(page.locator(".title")).toHaveCSS("font-family", /Bricolage Grotesque/);
+  await expect(page.locator("footer")).toHaveCSS("font-family", /IBM Plex Mono/);
 });
 
 test("nothing overflows sideways", async ({ page }) => {

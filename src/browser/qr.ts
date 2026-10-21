@@ -23,7 +23,7 @@ export function renderQr(container: Element, text: string): void {
   tile.setAttribute("fill", "#fff");
   const modules = document.createElementNS(SVG, "path");
   modules.setAttribute("d", qrModulesToPath(data, QUIET_ZONE));
-  modules.setAttribute("fill", "#171717");
+  modules.setAttribute("fill", "#121110");
   svg.append(tile, modules);
   container.replaceChildren(svg);
 }

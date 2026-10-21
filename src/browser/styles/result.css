@@ -1,7 +1,6 @@
 /* The result card: short link, target, Copy / Share / Shorten another, and the QR code. */
 
-/* The result card. */
-
+/* A sy.hr card: rounded, a hairline border, the surface colour. */
 .result {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -11,11 +10,11 @@
     "target qr"
     "actions qr";
   align-items: start;
-  gap: 0.3rem 1.5rem;
-  margin-top: 0.75rem;
-  padding: 1.25rem 1.35rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  gap: 6px 24px;
+  margin-top: 12px;
+  padding: 26px;
+  border: 1px solid var(--rule);
+  border-radius: 22px;
   background: var(--panel);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
@@ -27,14 +26,13 @@
   grid-template-areas: "title" "link" "target" "actions";
 }
 
+/* Like the title of sy.hr's "Right now" card. */
 .result-title {
   grid-area: title;
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 800;
 }
 
 .short-link-row {
@@ -42,15 +40,21 @@
   margin: 0;
 }
 
-/* Monospace, because slugs mix 0/O and l/I/1, which Raleway draws almost identically; people
-   read these links aloud and type them from screenshots. */
+/* Monospace, because slugs mix 0/O and l/I/1, which proportional faces draw almost alike;
+   people read these links aloud and type them from screenshots. */
 .short-link {
   color: var(--accent);
-  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  font-size: clamp(1.3rem, 4.6vw, 1.65rem);
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: clamp(1.25rem, 4.4vw, 1.6rem);
+  font-weight: 500;
   letter-spacing: -0.01em;
+  text-decoration: none;
   overflow-wrap: anywhere;
+}
+
+.short-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .result-target {
@@ -59,7 +63,7 @@
   margin: 0;
   overflow: hidden;
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 15px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -72,44 +76,49 @@
   grid-area: actions;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+  gap: 10px;
+  margin-top: 14px;
 }
 
+/* sy.hr's profile pills: mono, outlined, the icon before the label. */
 .action {
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;
-  padding: 0.55rem 0.95rem;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--heading);
-  font: inherit;
-  font-size: 0.95rem;
-  font-weight: 700;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 18px 10px 14px;
+  border: 1px solid var(--pill-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
   line-height: 1.2;
+  text-decoration: none;
   cursor: pointer;
   transition:
-    background-color 0.15s,
-    border-color 0.15s,
-    color 0.15s;
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.action .icon {
+  font-size: 16px;
 }
 
 .action:hover {
-  background: rgba(255, 255, 255, 0.12);
-  text-decoration: none;
+  border-color: currentColor;
+  color: var(--accent);
 }
 
 .action.is-done {
-  border-color: rgba(158, 230, 168, 0.45);
+  border-color: currentColor;
   color: var(--success);
 }
 
 .action-secondary {
+  padding-left: 18px;
   border-color: transparent;
-  background: transparent;
-  color: var(--text);
+  color: var(--muted);
 }
 
 .qr {
@@ -117,7 +126,7 @@
   width: 7.5rem;
   height: 7.5rem;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 14px;
   background: #fff;
 }
 
@@ -131,11 +140,12 @@
   .result {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "title" "link" "target" "actions" "qr";
+    padding: 22px;
   }
 
   .qr {
     width: 9rem;
     height: 9rem;
-    margin-top: 0.75rem;
+    margin-top: 12px;
   }
 }

@@ -22,7 +22,7 @@ const MAX_PIXEL_RATIO = 1.5;
 const MAX_CANVAS_PIXELS = 2_500_000;
 /** After a long pause (a hidden tab, a slow frame), don't jump the animation ahead. */
 const MAX_STEP_MS = 100;
-const BACKGROUND = "#171717";
+const BACKGROUND = "#121110";
 
 /** Starts the waves on `canvas`. Returns a function that stops them. */
 export function startWaves(canvas: HTMLCanvasElement, win: Window = window): () => void {

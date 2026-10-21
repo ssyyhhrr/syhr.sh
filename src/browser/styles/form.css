@@ -1,38 +1,36 @@
-/* The shorten form: one bar holding the box and the button, and the error line under it. */
-
-/* The form: one bar holding the box and the button. */
+/* The shorten form: one pill-shaped bar holding the box and the button, and the error line under it. */
 
 .field {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.4rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--pill-border);
+  border-radius: 999px;
   background: var(--panel);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .field:focus-within {
-  border-color: rgba(242, 210, 127, 0.65);
-  box-shadow: 0 0 0 4px rgba(242, 210, 127, 0.14);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(245, 192, 74, 0.14);
 }
 
 #url {
   flex: 1;
   min-width: 0;
-  padding: 0.75rem 0.85rem;
+  padding: 0 4px 0 18px;
   border: 0;
   outline: none;
   background: transparent;
-  color: var(--heading);
+  color: var(--text);
   font: inherit;
   /* 16px or more stops iOS Safari zooming the page when the box is focused. */
-  font-size: max(16px, 1.05rem);
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 500;
 }
 
 #url::placeholder {
@@ -47,15 +45,15 @@
 .submit {
   position: relative;
   flex: none;
-  min-height: 3rem;
-  padding: 0 1.4rem;
+  min-height: 48px;
+  padding: 0 24px;
   border: 0;
-  border-radius: 11px;
+  border-radius: 999px;
   background: var(--accent);
   color: var(--on-accent);
   font: inherit;
-  font-size: 1.05rem;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 700;
   cursor: pointer;
   transition:
     background-color 0.15s,
@@ -81,7 +79,7 @@
   width: 1.2rem;
   height: 1.2rem;
   margin: auto;
-  border: 2.5px solid rgba(23, 23, 23, 0.25);
+  border: 2.5px solid rgba(18, 17, 16, 0.25);
   border-top-color: var(--on-accent);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -95,11 +93,22 @@
   display: block;
 }
 
+/* On the narrowest phones, give the box the room for its placeholder. */
+@media (max-width: 24rem) {
+  #url {
+    padding-left: 12px;
+  }
+
+  .submit {
+    padding: 0 18px;
+  }
+}
+
 .form-error {
   min-height: 1.5em;
-  margin: 0.6rem 0.4rem 0;
+  margin: 10px 18px 0;
   color: var(--error);
-  font-size: 0.95rem;
+  font-size: 15px;
 }
 
 .shake {

@@ -33,11 +33,12 @@ export interface WaveSettings {
 }
 
 /**
- * The old site's values (per-frame steps of 0.001 at 60 fps). The palette is darker than the
- * old #666–#222 greys so white text and the gold accent stay readable on top.
+ * The old site's values (per-frame steps of 0.001 at 60 fps). The palette is sy.hr's warm
+ * near-black, only a few steps above the #121110 page, so the bands read as texture behind the
+ * text rather than competing with it (the old site's greys ran #666 to #222).
  */
 export const DEFAULT_WAVE_SETTINGS: WaveSettings = {
-  colors: ["#383838", "#2f2f2f", "#272727", "#202020", "#1a1a1a"],
+  colors: ["#2a2723", "#24221e", "#1f1d1a", "#1a1917", "#161513"],
   bands: 9,
   progressPerSecond: 0.06,
   swayPerSecond: 0.06,

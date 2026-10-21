@@ -12,34 +12,63 @@
   width: 100%;
   max-width: 42rem;
   margin: 0 auto;
-  padding: clamp(2.5rem, 10vh, 7rem) 1.25rem 1.5rem;
+  padding: clamp(2.5rem, 10vh, 7rem) 1.25rem 3rem;
 }
 
+/* sy.hr's headline: heavy, tight and large, with the accent on the name. */
 .title {
   margin: 0;
-  color: var(--heading);
-  font-size: clamp(3rem, 11vw, 5rem);
+  color: var(--text);
+  font-size: clamp(56px, 16vw, 96px);
   font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.02em;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
 }
 
 .tld {
   color: var(--accent);
 }
 
+/* sy.hr's intro: muted, a comfortable measure. */
 .tagline {
-  max-width: 34rem;
-  margin: 1.1rem 0 2.25rem;
-  font-size: clamp(1.05rem, 2.8vw, 1.25rem);
-  line-height: 1.6;
+  max-width: 600px;
+  margin: 22px 0 40px;
+  color: var(--muted);
+  font-size: clamp(17px, 2.6vw, 19px);
+}
+
+/* Inline links, as in sy.hr's facts line: text colour, with a faint underline that firms up
+   on hover. */
+.tagline a {
+  text-decoration: underline;
+  text-decoration-color: var(--faint);
+  text-underline-offset: 4px;
+}
+
+.tagline a:hover {
+  text-decoration-color: currentColor;
 }
 
 .notice {
-  margin: -0.75rem 0 1.5rem;
-  padding: 0.8rem 1rem;
-  border-left: 3px solid var(--accent);
-  border-radius: 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: -16px 0 24px;
+  padding: 14px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 16px;
   background: var(--panel);
-  color: #e6e6e6;
+  color: var(--text);
+  font-size: 15px;
+}
+
+/* An accent dot, like sy.hr's live dot, marking the notice. */
+.notice::before {
+  content: "";
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateY(-1px);
 }

@@ -1,6 +1,7 @@
 /*
- * syhr.sh's only stylesheet. Dark, Raleway and gold, like sy.hr, over the wave canvas. esbuild
- * bundles these imports back into one file; they're split by purpose only to keep each short.
+ * syhr.sh's only stylesheet: sy.hr's look (warm near-black, Bricolage Grotesque, IBM Plex Mono
+ * and yellow) over the wave canvas. esbuild bundles these imports back into one file; they're
+ * split by purpose only to keep each short.
  *
  * The Content-Security-Policy forbids inline styles, so every visual rule lives here; scripts
  * only toggle classes and the `hidden` attribute.

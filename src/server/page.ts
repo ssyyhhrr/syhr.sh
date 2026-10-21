@@ -97,7 +97,7 @@ export function renderPage(state: PageState, assets: PageAssets): Html {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>${title}</title>
         <meta name="description" content="${DESCRIPTION}" />
-        <meta name="theme-color" content="#171717" />
+        <meta name="theme-color" content="#121110" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         ${assets.styles.map((href) => html`<link rel="stylesheet" href="${href}" />`)}
         ${assets.scripts.map((src) => html`<script type="module" src="${src}"></script>`)}
@@ -106,7 +106,9 @@ export function renderPage(state: PageState, assets: PageAssets): Html {
         <canvas class="waves" aria-hidden="true"></canvas>
         <main class="shell">
           <header class="intro">
-            <h1 class="title">${SITE_NAME.replace(/\.sh$/, "")}<span class="tld">.sh</span></h1>
+            <h1 class="title">
+              ${SITE_NAME.replace(/\.sh$/, "")}<span class="tld name-grow">.sh</span>
+            </h1>
             <p class="tagline">
               ${TAGLINE.before}<a href="${OWNER_URL}">${TAGLINE.linkText}</a>${TAGLINE.after}
             </p>
