@@ -10,7 +10,7 @@
 <div align="center">
   <h3 align="center">syhr.sh</h3>
   <p align="center">
-    A simple web tool for creating short, memorable and shareable links written with Node.js.
+    A simple web tool for creating short, memorable and shareable links.
     <br />
     🌐 <a href="https://syhr.sh/">View Demo</a>
     ·
